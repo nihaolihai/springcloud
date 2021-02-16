@@ -12,6 +12,7 @@
       <module>cloud-api-commons</module>
       <module>eureka-server-7002</module>
       <module>eurela-server-7001</module>
+      <module>payManagens</module>
     </modules>
     <packaging>pom</packaging>
   <properties>
