@@ -3,6 +3,10 @@ package com.demo.springcloud.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/**
+ * 返回体
+ * @param <T>
+ */
 @Data
 @AllArgsConstructor
 public class CommoneResult<T>{

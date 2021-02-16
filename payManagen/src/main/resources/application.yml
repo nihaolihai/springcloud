@@ -19,7 +19,10 @@ mybatis:
 
 eureka:
   client:
+    #true表示向注册中心注册自己
     register-with-eureka: true
+    #true表示自己端不是注册中心，我的职责维护服务实例，并需要去检索服务
     fetch-registry: true
     service-url:
+      #设置eureka server交互的地址服务和注册服务都需要的依赖
       defaultZone: http://localhost:7002/eureka

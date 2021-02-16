@@ -10,7 +10,7 @@
       <module>payManagen</module>
       <module>orderMangen</module>
       <module>cloud-api-commons</module>
-      <module>cloud-eureka-server</module>
+      <module>eureka-server-7002</module>
       <module>eurela-server-7001</module>
     </modules>
     <packaging>pom</packaging>
