@@ -11,6 +11,7 @@
       <module>orderMangen</module>
       <module>cloud-api-commons</module>
       <module>cloud-eureka-server</module>
+      <module>eurela-server-7001</module>
     </modules>
     <packaging>pom</packaging>
   <properties>
