@@ -15,6 +15,7 @@
       <module>paymanagen-8002</module>
         <module>paymanagen-zookp-8003</module>
         <module>ordermanagen-zookp-80</module>
+        <module>ordermanagen-feign-80</module>
     </modules>
     <packaging>pom</packaging>
   <properties>

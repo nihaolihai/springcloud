@@ -1,0 +1,21 @@
+这是订单openfeign模块，端口8003
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-openfeign</artifactId>
+</dependency>
+
+@EnableFeignClients//开启feign
+seivice加上以下注解
+@Component
+@FeignClient(value = "CLOUD-PAYMENT-SERVICE")
+设置连接调用时长
+ribbon:
+  # 建立连接所用的时间，适用于网络正常连接，两端连接时间
+  ReadTimeout: 5000
+  # 建立连接后从服务端读取到可用资源所需的时间
+  ConnectTimeout: 5000
+ 打印日志
+ NONE:默认不打印
+ BASIC:仅记录请求方式，URL，响应状态及执行时间
+ HEADERS:除了BASIC中定义的信息之外，还有请求和响应的头信息
+ FULL:除了HEADERS中定义的信息之外，还有请求和响应的正文及元数据
