@@ -40,4 +40,13 @@ public class PaymentController {
             return new CommoneResult(666,"查询失败，传入id："+id,null);
         }
     }
+
+    /**
+     * getPaymentlb
+     * @return
+     */
+    @GetMapping(value = "/payment/getPaymentlb")
+    public String getPaymentlb(){
+        return serverPort;
+    }
 }
