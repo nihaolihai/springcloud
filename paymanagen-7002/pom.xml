@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>payManagens</artifactId>
+    <artifactId>paymanagen-7002</artifactId>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
