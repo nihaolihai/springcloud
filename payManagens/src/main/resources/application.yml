@@ -25,7 +25,9 @@ eureka:
     fetch-registry: true
     service-url:
       #设置eureka server交互的地址服务和注册服务都需要的依赖
-      #单机配置：defaultZone: http://localhost:7001/eureka
+      #单机配置
+      #defaultZone: http://localhost:7001/eureka
+      #集群配置
       defaultZone: http://eureka7001.com:7001/eureka,http://eureka7001.com:7002/eureka
   instance:
     instance-id: payment8002

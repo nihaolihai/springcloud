@@ -14,4 +14,5 @@ eureka:
       #单机配置：defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka
       #指向其他服务
       defaultZone: http://eureka7001.com:7001/eureka
-      #指向自己服务 defaultZone: http://eureka7002.com:7002/eureka
+      #指向自己服务
+      #defaultZone: http://eureka7002.com:7002/eureka

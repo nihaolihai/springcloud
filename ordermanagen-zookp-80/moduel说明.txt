@@ -1,0 +1,55 @@
+这是订单zookeeper模块，端口8003
+关闭防火墙命令：
+systemctl stop firewalld
+查看防火墙命令：
+systemctl status firewalld
+查看网络是否连通
+ping 127.0.0.1
+整合zookeeper连接
+zookeeper嘉宝冲突
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
+    <!-- 先排除自带的zookeeper3.5.3 -->
+    <exclusions>
+    <exclusion>
+        <groupId>org.apache.zookeeper</groupId>
+        <artifactId>zookeeper</artifactId>
+    </exclusion>
+    </exclusions>
+</dependency>
+<!-- 添加zookeeper3.4.9 -->
+<dependency>
+    <groupId>org.apache.zookeeper</groupId>
+    <artifactId>zookeeper</artifactId>
+    <version>3.4.9</version>
+</dependency>
+zookeeper服务节点是临时的而不是持久的
+
+下载consul
+https://www.consul.io/downloads
+安装步骤consul
+https://learn.hashicorp.com/consul
+consul使用指南
+https://www.springcloud.cc/spring-cloud-consul.html
+consul是一套开源的分布式服务发现与配置管理系统
+提供了微服务系统中的服务治理，
+配置中心，控制总线等功能，
+这些功能中的每一个都可以根据需要单独使用，
+也可以一起使用以构造全方位网络，
+特性：服务发现，健康检查(支持HTTP，TCP，docker，shell脚本定制化)，
+键值对存储，多数据中心，可视化web界面
+consul与zookeeper差不多，区别依赖包以配置项
+依赖
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-consul-discovery</artifactId>
+</dependency>
+配置
+spring:
+    cloud:
+        consul:
+            host: localhost
+            port: 8500
+            discovery:
+                service-name: ${spring.application.name}
