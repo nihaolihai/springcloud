@@ -1,0 +1,36 @@
+这是支付hystrix模块，端口8001，添加了eureka客户端及获取服务信息，
+依赖
+ <dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+</dependency>
+高并发线程池工具：apache-jmeter
+http://jmeter.apache.org/download_jmeter.cgi
+启动类加
+@EnableCircuitBreaker//开启服务降级
+
+servie
+//降级注解，加方法上，注意改value需要重启服务
+    @HystrixCommand(fallbackMethod = "paymentInfoErroHander",commandProperties = {
+        @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds",value = "3000")
+        })
+    public String paymentInfoErro(Integer id){
+            //计算异常
+            //int age = 10/0;
+            //超时异常
+    //        try {
+    //            Integer TIME = 1;
+    //            TimeUnit.SECONDS.sleep(TIME);
+    //        }catch (InterruptedException e){
+    //            e.printStackTrace();
+    //        }
+            return "线程池："+Thread.currentThread().getName()+"paymentInfoErro："+id;
+        }
+    /**
+         * 服务降级处理
+         */
+        public String paymentInfoErroHander(Integer id){
+            return "提供方超时，请稍后再试！";
+        }
+
+    sleep interrupted杀死进程

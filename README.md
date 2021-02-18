@@ -336,3 +336,136 @@ eureka:
         }
     }
 
+## hystrix
+https://github.com/Netflix/Hystrix
+
+是一个用于处理分布式系统的延迟和容错的开源库，
+在分布式系统里，许多依赖不可避免的会调用失败，
+比如超时，异常等，能够保证在一个一开出问题的情况下，
+不会导致整体服务失败，避免级联故障，以提高分布式系统的弹性，
+断路器：本身是一种开关装置，当某个服务单元发生故障之后，通过断路器的故障监控，
+向调用方返回一个符合预期的，可处理的备选响应（fallback）,
+而不是长时间的等待或者抛出异常调用方无法捕捉的异常，这样就保证了服务调用方的线程不会
+被长时间。不必要占用，从而避免了故障在分布式系统中的蔓延，乃至雪崩。
+
+服务降级
+以下情况出现：
+程序运行异常、超时、服务熔断触发服务降级、线程池/信号量打满也会导致服务降级
+
+服务熔断：类似家里的保险丝，达到最大阈值
+
+服务限流：秒杀高并发等操作
+提供者
+依赖
+ <dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+</dependency>
+消费方需要加
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-openfeign</artifactId>
+</dependency>
+
+@EnableCircuitBreaker//开启服务降级
+
+//降级注解，加方法上，注意改value需要重启服务
+@HystrixCommand(fallbackMethod = "paymentInfoErroHander",commandProperties = {
+    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds",value = "3000")
+    })
+     public String paymentInfoErro(Integer id){
+                //计算异常
+                //int age = 10/0;
+                //超时异常
+        //        try {
+        //            Integer TIME = 1;
+        //            TimeUnit.SECONDS.sleep(TIME);
+        //        }catch (InterruptedException e){
+        //            e.printStackTrace();
+        //        }
+                return "线程池："+Thread.currentThread().getName()+"paymentInfoErro："+id;
+            }
+    /**
+     * 服务降级处理
+     */
+    public String paymentInfoErroHander(Integer id){
+        return "线程池："+Thread.currentThread().getName()+"paymentInfoErroHander："+id+"\t"+"请稍后再试！";
+    }
+    
+    sleep interrupted杀死进程
+    
+消费者
+依赖
+ <dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-openfeign</artifactId>
+</dependency>
+@EnableHystrix//开启Hystrix
+
+//降级注解，加方法上，注意改value需要重启服务，自定义捕捉，若配置全局且加自定义捕捉，就会捕捉本身异常
+    @HystrixCommand(fallbackMethod = "orderInfoErroHander",commandProperties = {
+        @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds",value = "1500")
+        })
+    /**
+         * 服务降级处理
+         */
+        public String orderInfoErroHander(Integer id){
+            return "消费方超时，请稍后再试！";
+        }
+ 全局捕捉
+ controller类上加
+@DefaultProperties(defaultFallback = "globalOrderInfoErroHander")
+
+    /**
+     * 全部超时捕捉
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "/order/hystrix/globalpaymenterr/{id}")
+    @HystrixCommand
+    public String paymentInfoGlobalErro(@PathVariable("id")  Integer id){
+        return paymentFeignService.paymentInfoErro(id);
+    }
+
+     /**
+         * 全局服务降级处理
+         */
+        public String globalOrderInfoErroHander(){
+            return "全局消费方超时，请稍后再试！";
+        }
+
+ 宕机处理异常
+
+ @Component
+ @FeignClient(value = "CLOUD-PAYMENT-HYSTRIX",fallback = PaymentFallHystrixService.class)
+ public interface PaymentHystrixService {
+
+     @GetMapping(value = "/hystrix/paymentok/{id}")
+     String paymentInfoOK(@PathVariable("id")  Integer id);
+
+     @GetMapping(value = "/hystrix/paymenterr/{id}")
+     String paymentInfoErro(@PathVariable("id")  Integer id);
+ }
+
+ /**
+  * 同意捕捉异常超时，宕机
+  */
+ @Component
+ public class PaymentFallHystrixService implements PaymentHystrixService {
+
+     @Override
+     public String paymentInfoOK(Integer id) {
+         return "paymentInfoOK正常";
+     }
+
+     @Override
+     public String paymentInfoErro(Integer id) {
+         return "paymentInfoErro失败";
+     }
+ }
+
+
