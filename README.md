@@ -1,6 +1,18 @@
 # springcloud
-
+服务注册与发现
+eureka、zookeeper、consul、nacos
+服务调用
+ribbon、loadbalancer、openfeign
+服务降级
+hystrix、sentinel
+服务网关
+zuul、gateway
+服务配置
+config、nacoa
+服务总线
+bus、nacoa
 ## hutool
+
 https://www.hutool.cn/docs/#/
 
 ##常用依赖
@@ -560,6 +572,6 @@ https://github.com/Netflix/Hystrix
       hystrix.threadpool.default.metrics.rollingStats.timeInMilliseconds 线程池统计指标的时间，默认10000
       hystrix.threadpool.default.metrics.rollingStats.numBuckets 将rolling window划分为n个buckets，默认10
      
- 服务限流：秒杀高并发等操作
+ 服务限流：秒杀高并发等操作(sentinel)
 
 
