@@ -18,13 +18,33 @@ public class PayManagenController {
     @Value("${server.port}")
     private  String port;
 
+    /**
+     * 服务降级
+     * @param id
+     * @return
+     */
     @GetMapping(value = "/hystrix/paymentok/{id}")
     public String paymentInfoOK(@PathVariable("id")  Integer id){
         return payManagenService.paymentInfoOK(id);
     }
 
+    /**
+     * 服务降级
+     * @param id
+     * @return
+     */
     @GetMapping(value = "/hystrix/paymenterr/{id}")
     public String paymentInfoErro(@PathVariable("id")  Integer id){
         return payManagenService.paymentInfoErro(id);
+    }
+
+    /**
+     * 服务熔断
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "/hystrix/payment/circuit/{id}")
+    public String paymentInfoCircuit(@PathVariable("id")  Integer id){
+        return payManagenService.paymentCircuitBreaker(id);
     }
 }
