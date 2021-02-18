@@ -18,6 +18,7 @@
         <module>ordermanagen-feign-80</module>
         <module>paymanagen-hystrix-8001</module>
         <module>ordermanagen-hystrix-80</module>
+        <module>ordermanagen-hystrix-dashboard-9001</module>
     </modules>
     <packaging>pom</packaging>
   <properties>

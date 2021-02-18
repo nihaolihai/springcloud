@@ -21,6 +21,7 @@ https://www.hutool.cn/docs/#/
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
+    <!-- 图形化 -->
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-actuator</artifactId>
@@ -574,5 +575,19 @@ https://github.com/Netflix/Hystrix
       hystrix.threadpool.default.metrics.rollingStats.numBuckets 将rolling window划分为n个buckets，默认10
      
  服务限流：秒杀高并发等操作(sentinel)
+ 
+ ## hystrix仪表盘
+ 
+     依赖
+     <dependency>
+         <groupId>org.springframework.cloud</groupId>
+         <artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
+     </dependency>
+     @EnableHystrixDashboard//开启hystrix仪表盘
+     
+     输入地址
+     http://localhost:9001/hystrix
+     发送请求查看压力情况
+     http://localhost:8001/hystrix.stream
 
 

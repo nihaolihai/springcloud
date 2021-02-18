@@ -1,0 +1,11 @@
+这是支付hystrix仪表盘图形展示模块，端口9001，添加了eureka客户端及获取服务信息，
+依赖
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
+</dependency>
+@EnableHystrixDashboard//开启hystrix仪表盘
+输入地址
+http://localhost:9001/hystrix
+发送请求查看压力情况
+http://localhost:8001/hystrix.stream
