@@ -1,24 +1,24 @@
 这是订单hystrix模块，端口80，添加了eureka客户端及获取服务信息
 启动类加
-@EnableFeignClients//开启feign
+    @EnableFeignClients//开启feign
 
-service
-@FeignClient(value = "CLOUD-PAYMENT-HYSTRIX")//负载均衡
-@EnableHystrix//开启Hystrix
+    service
+    @FeignClient(value = "CLOUD-PAYMENT-HYSTRIX")//负载均衡
+    @EnableHystrix//开启Hystrix
 
-依赖
- <dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
-</dependency>
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-openfeign</artifactId>
-</dependency>
-配置
-feign:
-  hystrix:
-    enabled: true
+    依赖
+     <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-openfeign</artifactId>
+    </dependency>
+    配置
+    feign:
+      hystrix:
+        enabled: true
 
 //降级注解，加方法上，注意改value需要重启服务，自定义捕捉，若配置全局且加自定义捕捉，就会捕捉本身异常
     @HystrixCommand(fallbackMethod = "orderInfoErroHander",commandProperties = {
