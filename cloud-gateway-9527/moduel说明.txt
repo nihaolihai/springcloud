@@ -1,0 +1,9 @@
+这是gateway模块，端口9527
+https://spring.io/projects/spring-cloud-gateway#learn
+提供一种简单而有效的方式来对api进行路由，以及提供一些强大的过滤功能，
+比如：熔断、限流、安全、重试等
+依赖
+ <dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-gateway</artifactId>
+</dependency>

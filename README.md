@@ -589,5 +589,17 @@ https://github.com/Netflix/Hystrix
      http://localhost:9001/hystrix
      发送请求查看压力情况
      http://localhost:8001/hystrix.stream
+     
+##gateway
+https://spring.io/projects/spring-cloud-gateway#learn
+提供一种简单而有效的方式来对api进行路由，以及提供一些强大的过滤功能，
+比如：熔断、限流、重试等
 
-
+    依赖
+     <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-gateway</artifactId>
+    </dependency>
+ 
+ 能干什么：反向代理、鉴权、流量控制、熔断、日志监控
+ 三大核心：route(路由)、predicate(断言)、filter(过滤)
