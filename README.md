@@ -595,11 +595,72 @@ https://spring.io/projects/spring-cloud-gateway#learn
 提供一种简单而有效的方式来对api进行路由，以及提供一些强大的过滤功能，
 比如：熔断、限流、重试等
 
+    移除web依赖
     依赖
      <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-starter-gateway</artifactId>
     </dependency>
+    配置
+    server:
+      port: 9527
+    
+    spring:
+      #禁用缓存
+      thymeleaf:
+        cache: false
+      application:
+        name: cloud-gateway-service
+      cloud:
+        gateway:
+          routes:
+            - id: payment_routh
+              uri: http://localhost:8001
+              predicates:
+                - Path=/payment/get/**
+    
+            - id: payment_routh2
+              uri: http://localhost:8001
+              predicates:
+                - Path=/payment/getPaymentlb/**
+    
+    eureka:
+      instance:
+        hostname: gateway9527
+      client:
+        #true表示向注册中心注册自己
+        register-with-eureka: true
+        #是否从服务中心抓取已有的注册信息，默认true，单机无所谓，集群必须为true,才能配合ribbon使用负载均衡
+        fetch-registry: true
+        service-url:
+          #设置eureka server交互的地址服务和注册服务都需要的依赖
+          #单机配置
+          defaultZone: http://localhost:7001/eureka
+          #集群配置
+          #defaultZone: http://eureka7001.com:7001/eureka,http://eureka7001.com:7002/eureka
+    
+    /**
+     * 根据网关做路由配置
+     */
+    @Configuration
+    public class GatewayConfig {
+    
+        @Bean
+        public RouteLocator customRouteLocator(RouteLocatorBuilder routeLocatorBuilder){
+            RouteLocatorBuilder.Builder builder = routeLocatorBuilder.routes();
+            builder.route("path_route",r ->r.path("/guonei").uri("http://news.baidu.com/guonei")).build();
+            return builder.build();
+        }
+    
+        @Bean
+        public RouteLocator customRouteLocators(RouteLocatorBuilder routeLocatorBuilder){
+            RouteLocatorBuilder.Builder builder = routeLocatorBuilder.routes();
+            builder.route("path_routes",r ->r.path("/guoji").uri("http://news.baidu.com/guoji")).build();
+            return builder.build();
+        }
+    }
+    
+    http://news.baidu.com/
  
  能干什么：反向代理、鉴权、流量控制、熔断、日志监控
  三大核心：route(路由)、predicate(断言)、filter(过滤)
