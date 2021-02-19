@@ -15,11 +15,12 @@ config、nacoa
 * 服务总线
 bus、nacoa
 
-## hutool
+## java工具库hutool
 
 https://www.hutool.cn/docs/#/
 
-##常用依赖
+## 常用依赖
+    <dependencies>
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
@@ -57,7 +58,7 @@ https://www.hutool.cn/docs/#/
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
     </dependency>
-    <!--hutool-all -->
+    <!--java工具库hutool-all -->
     <dependency>
         <groupId>cn.hutool</groupId>
         <artifactId>hutool-all</artifactId>
@@ -92,7 +93,35 @@ https://www.hutool.cn/docs/#/
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
     </dependency>
-        
+    <!--gateway 无需加web,actuator依赖 -->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-gateway</artifactId>
+    </dependency>
+    <!--hystrix -->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+    </dependency> 
+    <!--hystrix-dashboard仪表盘 -->
+     <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
+    </dependency> 
+    </dependencies>
+    <build>
+        <plugins>
+          <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+              <fork>true</fork>
+              <addResources>true</addResources>
+            </configuration>
+          </plugin>
+        </plugins>
+    </build> 
+     
 ## 集群配置
 C:\Windows\System32\drivers\etc\hosts
 127.0.0.1       eureka7001.com
@@ -167,7 +196,7 @@ consul与zookeeper差不多，区别依赖包以配置项
                 port: 8500
                 discovery:
                     service-name: ${spring.application.name}
-## eureka
+## eureka注册中心
 
     配置
     服务端
@@ -593,7 +622,7 @@ https://github.com/Netflix/Hystrix
      发送请求查看压力情况
      http://localhost:8001/hystrix.stream
      
-##网关gateway
+## 服务网关gateway
 https://spring.io/projects/spring-cloud-gateway#learn
 提供一种简单而有效的方式来对api进行路由，以及提供一些强大的过滤功能，
 比如：熔断、限流、重试等
