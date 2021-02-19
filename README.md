@@ -98,7 +98,7 @@ C:\Windows\System32\drivers\etc\hosts
 127.0.0.1       eureka7001.com
 127.0.0.1       eureka7002.com
 127.0.0.1       eureka7003.com
-## zookeeper
+## zookeeper注册中心
     配置
     spring:
       #服务别名，注册到zookeeper服务名称
@@ -137,7 +137,7 @@ zookeeper嘉宝冲突
     
 zookeeper服务节点是临时的而不是持久的
 
-## consul
+## consul注册中心
 下载consul
 https://www.consul.io/downloads
 安装步骤consul
@@ -215,7 +215,7 @@ consul与zookeeper差不多，区别依赖包以配置项
 @EnableEurekaClient
 //该注解用于consul或zookeeper作为注册中心注册服务
 @EnableDiscoveryClient
-## ribbon
+## ribbon服务调用
      @LoadBalanced//支持负载均衡
      比如
      @Configuration
@@ -273,7 +273,7 @@ consul与zookeeper差不多，区别依赖包以配置项
              }
              return this.discoveryClient;
          }
-## openfeign
+## openfeign服务调用
     配置
     eureka:
       client:
@@ -362,7 +362,7 @@ consul与zookeeper差不多，区别依赖包以配置项
         }
     }
 
-## hystrix
+## hystrix服务降级
 https://github.com/Netflix/Hystrix
 
 是一个用于处理分布式系统的延迟和容错的开源库，
@@ -593,7 +593,7 @@ https://github.com/Netflix/Hystrix
      发送请求查看压力情况
      http://localhost:8001/hystrix.stream
      
-##gateway
+##网关gateway
 https://spring.io/projects/spring-cloud-gateway#learn
 提供一种简单而有效的方式来对api进行路由，以及提供一些强大的过滤功能，
 比如：熔断、限流、重试等
@@ -786,3 +786,6 @@ https://spring.io/projects/spring-cloud-gateway#learn
              return 0;
          }
      }
+ 
+ ## 分布式配置中心config
+ 
