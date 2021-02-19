@@ -1018,8 +1018,22 @@ https://spring.io/projects/spring-cloud-gateway#learn
     安装好erlang环境后才能使用rabbitmq
     下载rabbitmq
     https://www.rabbitmq.com/download.html
+    cd sbin
     执行：rabbitmq-plugins enable rabbitmq_management
     输入http://127.0.0.1:15672/
+    常用命令
+    关闭MQ rabbitmqctl stop
+    使用命令添加用户并授权
+    添加用户
+    rabbitmqctl add_user admin admin
+    设置permissions
+    rabbitmqctl set_permissions -p "/" admin ".*" ".*" ".*"
+    设置用户角色
+    rabbitmqctl set_user_tags admin administrator
+    查看新添加的admin
+    rabbitmqctl list_users
+    查看用于的权限
+    rabbitmqctl list_permissions -p /
 
     <!-- rabbitmq -->
     <dependency>
