@@ -1002,5 +1002,6 @@ https://spring.io/projects/spring-cloud-gateway#learn
     需手动调post去刷新
     curl -X POST "http://localhost:3355/actuator/refresh"
     想自动获取最新的配置则要用到消息总线bus
- 
+    
+ ## 消息总线bus
  
