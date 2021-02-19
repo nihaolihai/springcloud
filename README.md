@@ -883,6 +883,7 @@ https://spring.io/projects/spring-cloud-gateway#learn
      </dependencies>
  
      配置
+     
      spring:
        #服务别名，注册到eureka服务名称
        application:
@@ -911,6 +912,7 @@ https://spring.io/projects/spring-cloud-gateway#learn
              SpringApplication.run(ConfigMain3344.class,ares);
          }
      }
+     
      访问
      http://config-3344.com:3344/config-test.yml
      或者
@@ -919,7 +921,9 @@ https://spring.io/projects/spring-cloud-gateway#learn
     客户端
     application.yml是用户级的资源配置项
     boostrap.yml是系统级的，优先级更高
+    
     依赖
+    
     <dependencies>
             <!--config -->
             <dependency>
@@ -950,6 +954,7 @@ https://spring.io/projects/spring-cloud-gateway#learn
         </dependencies>
     
     配置
+    
     bootstrap.yml
     server:
       port: 3355
@@ -983,7 +988,9 @@ https://spring.io/projects/spring-cloud-gateway#learn
             SpringApplication.run(ConfigClient3355.class,ares);
         }
     }
+    
     在controller加@RefreshScope注解
+    
     @RestController
     @RefreshScope
     public class ConfigController {
@@ -996,6 +1003,7 @@ https://spring.io/projects/spring-cloud-gateway#learn
             return serverinfo;
         }
     }
+    
     访问
     http://localhost:3355/configinfo
     手动改配置中心服务端信息
@@ -1003,5 +1011,57 @@ https://spring.io/projects/spring-cloud-gateway#learn
     curl -X POST "http://localhost:3355/actuator/refresh"
     想自动获取最新的配置则要用到消息总线bus
     
- ## 消息总线bus
+ ## 消息总线bus,支持rabbit,kafka
+     rabbitmq
+    安装erlang
+    http://erlang.org/download/otp_win64_21.3.exe
+    安装好erlang环境后才能使用rabbitmq
+    下载rabbitmq
+    https://www.rabbitmq.com/download.html
+    执行：rabbitmq-plugins enable rabbitmq_management
+    输入http://127.0.0.1:15672/
+
+    <!-- rabbitmq -->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-bus-amqp</artifactId>
+    </dependency>
+    
+    服务端添加配置
+    rabbitmq:
+      host: localhost
+      port: 5672
+      username: guest
+      password: guest
+      
+    暴露配置bus刷新的端点
+    management:
+        endpoints:
+        web:
+            exposure:
+                include: 'bus-refresh'
+                
+    客户端
+    
+    在controller加@RefreshScope注解
+    
+    rabbitmq配置
+      rabbitmq:
+        host: localhost
+        port: 5672
+        username: guest
+        password: guest
+        
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: '*'
  
+    需手动调post去刷新
+    curl -X POST "http://localhost:3344/bus-refresh"
+    一次请求全部通知，广播式  
+    通知指定一个实例
+    curl -X POST "http://localhost:3344/actuator/bus-refresh/cloud-config-client:3355" 
+
+## 消息驱动 stream

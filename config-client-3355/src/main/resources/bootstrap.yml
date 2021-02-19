@@ -11,6 +11,12 @@ spring:
       name: config # 配置文件名称
       profile: dev # 读取后缀名称
       uri: http://localhost:3344 # 配置中心地址
+  # rabbitmq配置
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 
 eureka:
   client:
@@ -24,5 +30,5 @@ management:
       exposure:
         #加载所有的端点，默认只加载了info、health
         include: '*'
-    refresh:
-      enabled: false
+#    refresh:
+#      enabled: false
