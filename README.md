@@ -1,4 +1,7 @@
 # springcloud
+
+[spring.io](https://spring.io/projects/spring-cloud)
+
 * 服务注册与发现
 eureka、zookeeper、consul、nacos
 * 服务调用
@@ -664,3 +667,122 @@ https://spring.io/projects/spring-cloud-gateway#learn
  
  能干什么：反向代理、鉴权、流量控制、熔断、日志监控
  三大核心：route(路由)、predicate(断言)、filter(过滤)
+ 添加动态配置路由
+     
+     https://spring.io/projects/spring-cloud-gateway#learn
+     提供一种简单而有效的方式来对api进行路由，以及提供一些强大的过滤功能，
+     比如：熔断、限流、安全、重试等
+     移除web依赖
+     依赖
+      <dependency>
+         <groupId>org.springframework.cloud</groupId>
+         <artifactId>spring-cloud-starter-gateway</artifactId>
+     </dependency>
+     配置
+     server:
+       port: 9527
+     
+     spring:
+       #禁用缓存
+       thymeleaf:
+         cache: false
+       application:
+         name: cloud-gateway-service
+       cloud:
+         gateway:
+           discovery:
+             locator:
+               enabled: true #开启从注册中心动态创建路由的功能，利用微服务名称进行路由
+           routes:
+             - id: payment_routh # 路由的ID，没有规定规则但要求唯一
+               #uri: http://localhost:8001 # 匹配后提供服务的路由地址
+               uri: lb://cloud-payment-service # 提供者服务名称
+               predicates:
+                 - Path=/payment/get/** # 断言，路径匹配的进行路由
+     
+             - id: payment_routh2 # 路由的ID，没有规定规则但要求唯一
+               #uri: http://localhost:8001 # 匹配后提供服务的路由地址
+               uri: lb://cloud-payment-service # 提供者服务名称
+               predicates:
+                 - Path=/payment/getPaymentlb/**  # 断言，路径匹配的进行路由
+    
+     eureka:
+       instance:
+         hostname: gateway9527
+       client:
+         #true表示向注册中心注册自己
+         register-with-eureka: true
+         #是否从服务中心抓取已有的注册信息，默认true，单机无所谓，集群必须为true,才能配合ribbon使用负载均衡
+         fetch-registry: true
+         service-url:
+           #设置eureka server交互的地址服务和注册服务都需要的依赖
+           #单机配置
+           defaultZone: http://localhost:7001/eureka
+           #集群配置
+           #defaultZone: http://eureka7001.com:7001/eureka,http://eureka7001.com:7002/eureka
+     
+     http://news.baidu.com/
+     
+     /**
+      * 根据网关做路由配置
+      */
+     @Configuration
+     public class GatewayConfig {
+     
+         @Bean
+         public RouteLocator customRouteLocator(RouteLocatorBuilder routeLocatorBuilder){
+             RouteLocatorBuilder.Builder builder = routeLocatorBuilder.routes();
+             builder.route("path_route",r ->r.path("/guonei").uri("http://news.baidu.com/guonei")).build();
+             return builder.build();
+         }
+     
+         @Bean
+         public RouteLocator customRouteLocators(RouteLocatorBuilder routeLocatorBuilder){
+             RouteLocatorBuilder.Builder builder = routeLocatorBuilder.routes();
+             builder.route("path_routes",r ->r.path("/guoji").uri("http://news.baidu.com/guoji")).build();
+             return builder.build();
+         }
+     }
+
+     访问 
+     http://localhost:9527/payment/getPaymentlb
+     http://localhost:9527/guoji
+     官网
+     https://cloud.spring.io/spring-cloud-static/spring-cloud-gateway/2.2.0.RELEASE/reference/html/
+     断言：
+     ZonedDateTime.now();
+     - After=2020-11-10T20:30:07.417+08:00[Asia/Shanghai] #断言，时间在这之后才能执行
+     - Before=2020-11-10T20:30:07.417+08:00[Asia/Shanghai] #断言，时间在这之前才能执行
+     - Between=2020-11-10T20:30:07.417+08:00[Asia/Shanghai],2020-12-10T20:30:07.417+08:00[Asia/Shanghai] #Between 时间在这之间才能执行
+     - Cookie=username,zzyy #Cookie 请求需要带上cookie[key,value正则匹配]
+     测试
+     curl http://localhost:9527/payment/lb --cookie "username=zzyy"
+     - Header=X-Request-Id, \d+  #Header 请求头需要有X-Request-Id属性名,值为整数正则表达式
+     测试
+     curl http://localhost:9527/payment/lb -H "X-Request-Id:1234"
+     - Host=**.atguigu.com #Host 域名匹配
+     - Method=GET #Method 方法请求方式匹配
+     - Query=username, \d+  #必须带有参数名usernamem，且值为正整数
+     过滤
+     /**
+      * 自定义过滤器
+      */
+     @Component
+     public class MyGobalFilter implements GlobalFilter, Ordered {
+     
+         @Override
+         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+             String uname = exchange.getRequest().getQueryParams().getFirst("uname");
+             if(uname==null){
+                 System.out.println("用户名为空");
+                 exchange.getResponse().setStatusCode(HttpStatus.NOT_ACCEPTABLE);
+                 return exchange.getResponse().setComplete();
+             }
+             return chain.filter(exchange);
+         }
+     
+         @Override
+         public int getOrder() {
+             return 0;
+         }
+     }
