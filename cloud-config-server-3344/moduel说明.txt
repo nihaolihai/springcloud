@@ -1,0 +1,70 @@
+这是分布式配置中心服务端模块，端口3344
+依赖
+<dependencies>
+         <!--config-server -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-server</artifactId>
+        </dependency>
+        <!--eureka-client -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- 图形化 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!--热部署 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <!--lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+配置
+spring:
+  #服务别名，注册到eureka服务名称
+  application:
+    name: cloud-config-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/nihaolihai/springcloud-config.git
+          search-paths:
+            - springcloud-config
+      label: master
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:7001/eureka
+
+启动类
+@SpringBootApplication
+@EnableEurekaClient//开启eureka客户端
+@EnableConfigServer//开启配置中心服务
+public class ConfigMain3344 {
+
+    public static void main(String[] ares){
+        SpringApplication.run(ConfigMain3344.class,ares);
+    }
+}
+访问
+http://config-3344.com:3344/config-test.yml
+或者
+http://config-3344.com:3344/config/test

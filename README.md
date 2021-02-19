@@ -121,6 +121,22 @@ https://www.hutool.cn/docs/#/
           </plugin>
         </plugins>
     </build> 
+    <!--删除多余依赖 -->
+    <dependency>
+       <groupId>ms.platform</groupId>
+       <artifactId>ops-rpc-client</artifactId>
+       <version>1.1.7</version>
+       <exclusions>
+          <exclusion>
+             <groupId>ch.qos.logback</groupId>
+             <artifactId>logback-core</artifactId>
+          </exclusion>
+          <exclusion>
+             <groupId>ch.qos.logback</groupId>
+             <artifactId>logback-classic</artifactId>
+          </exclusion>
+       </exclusions>
+    </dependency>
      
 ## 集群配置
 C:\Windows\System32\drivers\etc\hosts
@@ -828,5 +844,163 @@ https://spring.io/projects/spring-cloud-gateway#learn
  * 运行期间动态调整配置，不在需要在每个服务部署的机器上编写配置文件，服务会向配置中心统一拉取配置自己的信息
  * 当配置发生变动时，服务不需要重启即可感知到配置的变化并应用新的的配置
  * 将配置信息以REST接口的形式暴露
+ 
+       
+       依赖
+        <dependencies>
+          <!--config-server -->
+         <dependency>
+             <groupId>org.springframework.cloud</groupId>
+             <artifactId>spring-cloud-config-server</artifactId>
+         </dependency>
+         <!--eureka-client -->
+         <dependency>
+             <groupId>org.springframework.cloud</groupId>
+             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+         </dependency>
+         <dependency>
+             <groupId>org.springframework.boot</groupId>
+             <artifactId>spring-boot-starter-web</artifactId>
+         </dependency>
+         <!-- 图形化 -->
+         <dependency>
+             <groupId>org.springframework.boot</groupId>
+             <artifactId>spring-boot-starter-actuator</artifactId>
+         </dependency>
+         <!--热部署 -->
+         <dependency>
+             <groupId>org.springframework.boot</groupId>
+             <artifactId>spring-boot-devtools</artifactId>
+             <scope>runtime</scope>
+             <optional>true</optional>
+         </dependency>
+         <!--lombok -->
+         <dependency>
+             <groupId>org.projectlombok</groupId>
+             <artifactId>lombok</artifactId>
+             <optional>true</optional>
+         </dependency>
+     </dependencies>
+ 
+     配置
+     spring:
+       #服务别名，注册到eureka服务名称
+       application:
+         name: cloud-config-service
+       cloud:
+         config:
+           server:
+             git:
+               uri: https://github.com/nihaolihai/springcloud-config.git
+               search-paths:
+                 - springcloud-config
+           label: master
+     
+     eureka:
+       client:
+         service-url:
+           defaultZone: http://localhost:7001/eureka
+     
+     启动类
+     @SpringBootApplication
+     @EnableEurekaClient//开启eureka客户端
+     @EnableConfigServer//开启配置中心服务
+     public class ConfigMain3344 {
+     
+         public static void main(String[] ares){
+             SpringApplication.run(ConfigMain3344.class,ares);
+         }
+     }
+     访问
+     http://config-3344.com:3344/config-test.yml
+     或者
+     http://config-3344.com:3344/config/test
+     
+    客户端
+    application.yml是用户级的资源配置项
+    boostrap.yml是系统级的，优先级更高
+    依赖
+    <dependencies>
+            <!--config -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-config</artifactId>
+                <version>2.2.2.RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+            </dependency>
+            <!-- 图形化 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-actuator</artifactId>
+            </dependency>
+            <!--热部署 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-devtools</artifactId>
+                <scope>runtime</scope>
+                <optional>true</optional>
+            </dependency>
+        </dependencies>
+    
+    配置
+    bootstrap.yml
+    server:
+      port: 3355
+    
+    spring:
+      #服务别名，注册到eureka服务名称
+      application:
+        name: cloud-config-client
+      cloud:
+        config:
+          label: master # 分支名称
+          name: config # 配置文件名称
+          profile: dev # 读取后缀名称
+          uri: http://localhost:3344 # 配置中心地址
+    
+    eureka:
+      client:
+        service-url:
+          defaultZone: http://localhost:7001/eureka
+    
+    eureka:
+      client:
+        service-url:
+          defaultZone: http://localhost:7001/eureka
+    
+    启动类
+    @SpringBootApplication
+    @EnableEurekaClient
+    public class ConfigClient3355 {
+        public static void main(String[] ares){
+            SpringApplication.run(ConfigClient3355.class,ares);
+        }
+    }
+    在controller加@RefreshScope注解
+    @RestController
+    @RefreshScope
+    public class ConfigController {
+    
+        @Value("${config.info}")
+        private String serverinfo;
+    
+        @GetMapping(value = "/configinfo")
+        public String getServerInfo(){
+            return serverinfo;
+        }
+    }
+    访问
+    http://localhost:3355/configinfo
+    手动改配置中心服务端信息
+    需手动调post去刷新
+    curl -X POST "http://localhost:3355/actuator/refresh"
+    想自动获取最新的配置则要用到消息总线bus
  
  
