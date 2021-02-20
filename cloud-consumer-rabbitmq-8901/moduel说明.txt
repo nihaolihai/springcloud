@@ -45,7 +45,7 @@ spring:
           destination: studyExchange #表示要使用的exchange名称定义
           content-type: application/json #设置信息类型，本次为json,文本则设置“text/plain”
           binder: defaultRabbit #设置要绑定的信息服务的具体设置
-
+          group: cosum8901
 
 eureka:
   client:

@@ -21,7 +21,7 @@ spring:
           destination: studyExchange #表示要使用的exchange名称定义
           content-type: application/json #设置信息类型，本次为json,文本则设置“text/plain”
           binder: defaultRabbit #设置要绑定的信息服务的具体设置
-
+          group: cosum8901
 
 eureka:
   client:
@@ -36,7 +36,7 @@ eureka:
       #集群设置
       #defaultZone: http://eureka7001.com:7001/eureka,http://eureka7001.com:7002/eureka
   instance:
-    instance-id: consum-8801.com
+    instance-id: consum-8901.com
     prefer-ip-address: true #显示主机IP显示
     #eureka客户端向服务端发送心跳的时间间隔，单位为妙(默认30s)
     lease-renewal-interval-in-seconds: 2

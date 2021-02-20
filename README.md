@@ -1422,4 +1422,10 @@ https://spring.io/projects/spring-cloud-gateway#learn
         }
     }
     
+    如何解决重复性消费?
+    需要用到group: cosum8902
+    
+## 分布式请求链路跟踪 sleuth
+
+    
         
