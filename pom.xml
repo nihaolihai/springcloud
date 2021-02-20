@@ -23,6 +23,9 @@
       <module>cloud-config-server-3344</module>
       <module>config-client-3355</module>
       <module>springboot-redis-token</module>
+      <module>cloud-provider-rabbitmq-8801</module>
+      <module>cloud-consumer-rabbitmq-8901</module>
+      <module>cloud-consumer-rabbitmq-8902</module>
     </modules>
     <packaging>pom</packaging>
   <properties>
