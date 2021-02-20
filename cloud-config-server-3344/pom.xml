@@ -11,10 +11,10 @@
 
     <artifactId>cloud-config-server-3344</artifactId>
     <dependencies>
-        <!-- rabbitmq -->
+        <!--添加消息总线RabbitMQ支持-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-bus-amqp</artifactId>
+            <artifactId>spring-cloud-starter-bus-amqp</artifactId>
         </dependency>
         <!--config-server -->
         <dependency>

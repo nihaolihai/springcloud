@@ -1,11 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8" addBOMForNewFiles="with NO BOM">
+  <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/cloud-api-commons" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/cloud-eureka-server" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/orderMangen" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/payManagen" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cloud-api-commons/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cloud-config-server-3344/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cloud-config-server-3344/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cloud-gateway-9527/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cloud-gateway-9527/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/config-client-3355/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/config-client-3355/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/eureka-server-7002/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/eureka-server-7002/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/eurela-server-7001/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/eurela-server-7001/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ordermanagen-feign-80/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ordermanagen-feign-80/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ordermanagen-hystrix-80/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ordermanagen-hystrix-80/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ordermanagen-hystrix-dashboard-9001/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ordermanagen-hystrix-dashboard-9001/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ordermanagen-zookp-80/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ordermanagen-zookp-80/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ordermangen-80/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ordermangen-80/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paymanagen-8001/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paymanagen-8001/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paymanagen-8002/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paymanagen-8002/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paymanagen-hystrix-8001/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paymanagen-hystrix-8001/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paymanagen-zookp-8003/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paymanagen-zookp-8003/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/springboot-redis-token/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/springboot-redis-token/src/main/resources" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

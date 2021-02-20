@@ -1,0 +1,216 @@
+这是生产token模块
+依赖
+<parent>
+        <artifactId>daycloud</artifactId>
+        <groupId>com.demo.springcloud</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>mydlq.club</groupId>
+    <artifactId>springboot-redis-token</artifactId>
+    <version>0.0.1</version>
+    <name>springboot-redis-token</name>
+    <description>Idempotent Demo</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <dependencies>
+        <!--springboot web-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!--springboot data redis-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+        <!--lombok-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+配置
+spring:
+  redis:
+    ssl: false
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+    timeout: 1000
+    password:
+    lettuce:
+      pool:
+        max-active: 100
+        max-wait: -1
+        min-idle: 0
+        max-idle: 20
+
+工具
+@Slf4j
+@Service
+public class TokenUtilService {
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    /**
+     * 存入 Redis 的 Token 键的前缀
+     */
+    private static final String IDEMPOTENT_TOKEN_PREFIX = "idempotent_token:";
+
+    /**
+     * 创建 Token 存入 Redis，并返回该 Token
+     *
+     * @param value 用于辅助验证的 value 值
+     * @return 生成的 Token 串
+     */
+    public String generateToken(String value) {
+        // 实例化生成 ID 工具对象
+        String token = UUID.randomUUID().toString();
+        // 设置存入 Redis 的 Key
+        String key = IDEMPOTENT_TOKEN_PREFIX + token;
+        // 存储 Token 到 Redis，且设置过期时间为5分钟
+        redisTemplate.opsForValue().set(key, value, 5, TimeUnit.MINUTES);
+        // 返回 Token
+        return token;
+    }
+
+    /**
+     * 验证 Token 正确性
+     *
+     * @param token token 字符串
+     * @param value value 存储在Redis中的辅助验证信息
+     * @return 验证结果
+     */
+    public boolean validToken(String token, String value) {
+        // 设置 Lua 脚本，其中 KEYS[1] 是 key，KEYS[2] 是 value
+        String script = "if redis.call('get', KEYS[1]) == KEYS[2] then return redis.call('del', KEYS[1]) else return 0 end";
+        RedisScript<Long> redisScript = new DefaultRedisScript<>(script, Long.class);
+        // 根据 Key 前缀拼接 Key
+        String key = IDEMPOTENT_TOKEN_PREFIX + token;
+        // 执行 Lua 脚本
+        Long result = redisTemplate.execute(redisScript, Arrays.asList(key, value));
+        // 根据返回结果判断是否成功成功匹配并删除 Redis 键值对，若果结果不为空和0，则验证通过
+        if (result != null && result != 0L) {
+            log.info("验证 token={},key={},value={} 成功", token, key, value);
+            return true;
+        }
+        log.info("验证 token={},key={},value={} 失败", token, key, value);
+        return false;
+    }
+
+}
+接口调用
+@Slf4j
+@RestController
+public class TokenController {
+
+    @Autowired
+    private TokenUtilService tokenService;
+
+    /**
+     * 获取 Token 接口
+     *
+     * @return Token 串
+     */
+    @GetMapping("/token")
+    public String getToken() {
+        // 获取用户信息（这里使用模拟数据）
+        // 注：这里存储该内容只是举例，其作用为辅助验证，使其验证逻辑更安全，如这里存储用户信息，其目的为:
+        // - 1)、使用"token"验证 Redis 中是否存在对应的 Key
+        // - 2)、使用"用户信息"验证 Redis 的 Value 是否匹配。
+        String userInfo = "mydlq";
+        // 获取 Token 字符串，并返回
+        return tokenService.generateToken(userInfo);
+    }
+
+    /**
+     * 接口幂等性测试接口
+     *
+     * @param token 幂等 Token 串
+     * @return 执行结果
+     */
+    @PostMapping("/test")
+    public String test(@RequestHeader(value = "token") String token) {
+        // 获取用户信息（这里使用模拟数据）
+        String userInfo = "mydlq";
+        // 根据 Token 和与用户相关的信息到 Redis 验证是否存在对应的信息
+        boolean result = tokenService.validToken(token, userInfo);
+        // 根据验证结果响应不同信息
+        return result ? "正常调用" : "重复调用";
+    }
+
+}
+启动类
+@SpringBootApplication
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+}
+mock测试类
+@Slf4j
+@SpringBootTest
+@RunWith(SpringRunner.class)
+public class IdempotenceTest {
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    @Test
+    public void interfaceIdempotenceTest() throws Exception {
+        // 初始化 MockMvc
+        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        // 调用获取 Token 接口
+        String token = mockMvc.perform(MockMvcRequestBuilders.get("/token")
+                .accept(MediaType.TEXT_HTML))
+                .andReturn()
+                .getResponse().getContentAsString();
+        log.info("获取的 Token 串：{}", token);
+        // 循环调用 5 次进行测试
+        for (int i = 1; i <= 5; i++) {
+            log.info("第{}次调用测试接口", i);
+            // 调用验证接口并打印结果
+            String result = mockMvc.perform(MockMvcRequestBuilders.post("/test")
+                    .header("token", token)
+                    .accept(MediaType.TEXT_HTML))
+                    .andReturn().getResponse().getContentAsString();
+            log.info(result);
+//            // 结果断言
+//            if (i == 0) {
+//                System.out.println("调用返回值："+result+"\t"+"正常调用");
+//                //Assert.assertEquals(result, "正常调用");
+//            } else {
+//                System.out.println("调用返回值："+result+"\t"+"重复调用");
+//                //Assert.assertEquals(result, "重复调用");
+//            }
+        }
+    }
+
+}
