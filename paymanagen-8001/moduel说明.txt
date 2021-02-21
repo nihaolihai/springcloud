@@ -1,1 +1,105 @@
 这是支付模块，端口8001，添加了eureka客户端及注入eureka集群
+依赖
+<dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- 图形化 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>1.1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.demo.springcloud</groupId>
+            <artifactId>cloud-api-commons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-zipkin</artifactId>
+        </dependency>
+    </dependencies>
+配置
+spring:
+  application:
+    name: cloud-payment-service
+  zipkin:
+      base-url: http://localhost:9411
+  sleuth:
+    sampler:
+       probability: 1 #采样率值介于0和1，1代表全部采集
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: org.gjt.mm.mysql.Driver
+    url: jdbc:mysql://localhost:3306/demo?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: qiuroot889
+    validationQuery: SELECT 1
+
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.demo.springcloud.entities
+
+eureka:
+  client:
+    #true表示向注册中心注册自己
+    register-with-eureka: true
+    #是否从服务中心抓取已有的注册信息，默认true，单机无所谓，集群必须为true,才能配合ribbon使用负载均衡
+    fetch-registry: true
+    service-url:
+      #设置eureka server交互的地址服务和注册服务都需要的依赖
+      #单机配置：
+      #defaultZone: http://localhost:7001/eureka
+      #集群设置
+      defaultZone: http://eureka7001.com:7001/eureka,http://eureka7001.com:7002/eureka
+  instance:
+    instance-id: payment8001
+    prefer-ip-address: true #显示主机IP显示
+    #eureka客户端向服务端发送心跳的时间间隔，单位为妙(默认30s)
+    lease-renewal-interval-in-seconds: 1
+    #eureka服务端在收到最后一次心跳后等待时间上限，单位为妙(默认90s)，超时将剔除服务
+    lease-expiration-duration-in-seconds: 2
+引入zipkin
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-zipkin</artifactId>
+</dependency>

@@ -90,4 +90,13 @@ public class PaymentController {
         }
         return serverPort;
     }
+
+    /**
+     * zipkin
+     * @return
+     */
+    @GetMapping(value = "/payment/getZipkin")
+    public String getZipkin(){
+        return "welcome to zipkin，来到这里你将是最璀璨的星耀!";
+    }
 }

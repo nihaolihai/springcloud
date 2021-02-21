@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: cloud-order-service # eureka服务端的实例名称
+  zipkin:
+    base-url: http://localhost:9411
+  sleuth:
+    sampler:
+      probability: 1 #采样率值介于0和1，1代表全部采集
 
 eureka:
   client:

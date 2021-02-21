@@ -1357,6 +1357,8 @@ https://spring.io/projects/spring-cloud-gateway#learn
               destination: studyExchange #表示要使用的exchange名称定义
               content-type: application/json #设置信息类型，本次为json,文本则设置“text/plain”
               binder: defaultRabbit #设置要绑定的信息服务的具体设置
+			  #group: cosum8901
+			  group: cosum8902
     
     
     eureka:
@@ -1426,6 +1428,31 @@ https://spring.io/projects/spring-cloud-gateway#learn
     需要用到group: cosum8902
     
 ## 分布式请求链路跟踪 sleuth
+提供一套服务跟踪的解决方案
+springcloud从F版起已不需要构建zipkin sever,只需调用jar包即可。
+下载zipkin(2.12.9/zipkin-server-2.12.9-exec.jar)
+
+https://dl.bintray.com/openzipkin/maven/io/zipkin/java/zipkin-server/
+
+运行：java -jar zipkin-server-2.12.9-exec.jar
+
+访问：localhost:9411/zipkin/
+
+    依赖
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-zipkin</artifactId>
+    </dependency>
+    
+    配置
+    spring:
+        zipkin:
+            base-url: http://localhost:9411
+        sleuth:
+          sampler:
+            probability: 1 #采样率值介于0和1，1代表全部采集
+    
+
 
     
         

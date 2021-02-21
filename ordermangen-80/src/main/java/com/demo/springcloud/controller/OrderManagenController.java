@@ -80,4 +80,13 @@ public class OrderManagenController {
         URI uri = serviceInstance.getUri();
         return restTemplate.getForObject(uri+"/payment/getPaymentlb",String.class);
     }
+
+    /**
+     * getZipkin
+     * @return
+     */
+    @GetMapping(value = "/order/payment/getZipkin")
+    public String getZipkin(){
+        return restTemplate.getForObject("http://localhost:8001/payment/getZipkin",String.class);
+    }
 }
