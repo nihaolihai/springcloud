@@ -1,0 +1,13 @@
+server:
+  port: 83
+
+spring:
+  application:
+    name: cloud-nacos-consumer
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848 #设置nacos地址
+
+service-url:
+  nacos-user-serive: http://cloud-nacos-provider

@@ -1,0 +1,71 @@
+这是nacos提供者模块,端口9002
+    依赖
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- 图形化 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.demo.springcloud</groupId>
+            <artifactId>cloud-api-commons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-commons</artifactId>
+            <version>2.2.1.RELEASE</version>
+        </dependency>
+    </dependencies>
+
+    配置
+    spring:
+      application:
+        name: cloud-nacos-provider
+      cloud:
+        nacos:
+          discovery:
+            server-addr: localhost:8848 #设置nacos地址
+
+    management:
+      endpoints:
+      web:
+        exposure:
+          include: '*'
+
+    启动类
+    @SpringBootApplication
+    @EnableDiscoveryClient
+    public class NacosProviderDemoApplication9002 {
+
+        public static void main(String[] args) {
+            SpringApplication.run(NacosProviderDemoApplication9002.class, args);
+        }
+
+    }
+
+   启动项右击选择copy congiuration  在vm options 输入 -DServer.port=9002

@@ -1,0 +1,14 @@
+server:
+  port: 3377
+
+spring:
+  #服务别名，注册到eureka服务名称
+  application:
+    name: cloud-nacos-config
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848 #设置nacos地址
+      config:
+        server-addr: localhost:8848 #设置nacos地址
+        file-extension: yaml # 指定yaml文件配置

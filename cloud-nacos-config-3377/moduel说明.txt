@@ -1,0 +1,18 @@
+这是nacos配置中心模块，端口3377
+    依赖
+
+    配置
+    spring:
+      #服务别名，注册到eureka服务名称
+      application:
+        name: cloud-nacos-config
+      cloud:
+        nacos:
+          discovery:
+            server-addr: localhost:8848 #设置nacos地址
+          config:
+            server-addr: localhost:8848 #设置nacos地址
+            file-extension: yaml # 指定yaml文件配置
+
+nacos服务配置新增：cloud-nacos-config-dev.yaml
+选择yaml输入 config:info: nacos-dev

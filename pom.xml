@@ -26,6 +26,10 @@
       <module>cloud-provider-rabbitmq-8801</module>
       <module>cloud-consumer-rabbitmq-8901</module>
       <module>cloud-consumer-rabbitmq-8902</module>
+      <module>cloud-provider-payment-nacos-9001</module>
+      <module>cloud-provider-payment-nacos-9002</module>
+      <module>cloud-consumer-nacos-83</module>
+        <module>cloud-nacos-config-3377</module>
     </modules>
     <packaging>pom</packaging>
   <properties>
@@ -61,6 +65,7 @@
         <version>${lombok.version}</version>
         <scope>provided</scope>
       </dependency>
+      <!--spring-cloud-alibaba -->
       <dependency>
         <groupId>com.alibaba.cloud</groupId>
         <artifactId>spring-cloud-alibaba-dependencies</artifactId>

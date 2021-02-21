@@ -1451,8 +1451,202 @@ https://dl.bintray.com/openzipkin/maven/io/zipkin/java/zipkin-server/
         sleuth:
           sampler:
             probability: 1 #采样率值介于0和1，1代表全部采集
+## springcloud alibaba
+[中文官网](https://github.com/alibaba/spring-cloud-alibaba/blob/master/README-zh.md)
+[英文官网](https://spring-cloud-alibaba-group.github.io/github-pages/greenwich/spring-cloud-alibaba.html)
+
+能干什么？？？
+* 服务限流降级：默认支持servlet,feign,resttemplete,dubbo,rocketmq,小牛柳降级功能的接入，
+可以在运行时通过控制台实时修改限流降级规则，还支持查看限流降级metrics监控
+* 服务注册与发现：适配springcloud服务注册与发现标准，默认集成了ribbon支持
+* 分布式配置管理：支持分布式系统中的外部化配置，配置更改时自动刷新
+* 消息驱动能力基于springcloud stream为微服务应用构建消息驱动能力
+* 阿里云对象存储：阿里云提供的海量、安全、低成本、高并发的云存储服务，
+支持在任何应用、任何时间、任何地点存储和访问人员类型的数据
+* 分布式任务调度：提供秒级、精准、高可靠、高可用的定时(基于cron表达式)任务调度服务，
+同时通过分布式的任务执行模型，如网络任务。网格任务支持海量子任务均匀分配到所有worker(schedulerx-client)上执行
+
+### nacos(dynamic naming and configuration service)
+nacos是一个更易于构建云原生应用的动态服务发现、配置管理和服务管理平台,
+就是注册中心+配置中心的组合，等价于nacos=eureka+config+bus
+替代eureka做服务注册中心，替代config做配置中心
+
+[nacos文档](https://nacos.io/en-us/)
+
+[下载nacos](https://github.com/alibaba/nacos/releases)
+
+直接运行bin下的startup.cmd
+访问：localhost:8848/nacos
     
+    提供者
+    依赖
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- 图形化 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.demo.springcloud</groupId>
+            <artifactId>cloud-api-commons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-commons</artifactId>
+            <version>2.2.1.RELEASE</version>
+        </dependency>
+    </dependencies>
+    配置
+    spring:
+      application:
+        name: cloud-nacos-provider
+      cloud:
+        nacos:
+          discovery:
+            server-addr: localhost:8848 #设置nacos地址
+
+    management:
+      endpoints:
+      web:
+        exposure:
+          include: '*'
+
+    启动类
+        @SpringBootApplication
+        @EnableDiscoveryClient
+        public class NacosProviderDemoApplication9001 {
+
+            public static void main(String[] args) {
+                SpringApplication.run(NacosProviderDemoApplication9001.class, args);
+            }
+
+        }
+
+        @RestController
+        public class NacosPaymentController {
+
+            @GetMapping(value = "/providernacos/echo/{string}")
+            public String echo(@PathVariable String string) {
+                return "9001Hello Nacos Discovery " + string;
+            }
+        }
+    
+    消费者
+    依赖
+    <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+            </dependency>
+            <!-- 图形化 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-actuator</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-devtools</artifactId>
+                <scope>runtime</scope>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.demo.springcloud</groupId>
+                <artifactId>cloud-api-commons</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-commons</artifactId>
+                <version>2.2.1.RELEASE</version>
+            </dependency>
+        </dependencies>
+
+    配置
+    spring:
+      application:
+        name: cloud-nacos-consumer
+      cloud:
+        nacos:
+          discovery:
+            server-addr: localhost:8848 #设置nacos地址
+
+    service-url:
+      nacos-user-serive: http://cloud-nacos-provider
 
 
-    
-        
+    @SpringBootApplication
+    @EnableDiscoveryClient
+    public class NacosConsumerDemoApplication83 {
+
+        public static void main(String[] args) {
+            SpringApplication.run(NacosConsumerDemoApplication83.class, args);
+        }
+
+    }
+
+    @Configuration
+    public class ApplicationContextBean {
+
+        @Bean
+        @LoadBalanced
+        public RestTemplate getRestTemplate(){
+            return new RestTemplate();
+        }
+
+    }
+
+    @RestController
+    public class NacosOrderController {
+
+        @Resource
+        private RestTemplate restTemplate;
+
+        @Value("${service-url.nacos-user-serive}")
+        private String serverUrl;
+
+        @GetMapping(value = "/consumernacos/echo/{string}")
+        public String echo(@PathVariable String string) {
+
+            return restTemplate.getForObject(serverUrl+"/providernacos/echo/"+string,String.class)+"consumerHello Nacos Discovery " + string;
+        }
+    }
+      
