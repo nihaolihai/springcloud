@@ -1432,7 +1432,7 @@ https://spring.io/projects/spring-cloud-gateway#learn
 springcloud从F版起已不需要构建zipkin sever,只需调用jar包即可。
 下载zipkin(2.12.9/zipkin-server-2.12.9-exec.jar)
 
-https://dl.bintray.com/openzipkin/maven/io/zipkin/java/zipkin-server/
+[下载zipkin(2.12.9/zipkin-server-2.12.9-exec.jar)](https://dl.bintray.com/openzipkin/maven/io/zipkin/java/zipkin-server/)
 
 运行：java -jar zipkin-server-2.12.9-exec.jar
 
