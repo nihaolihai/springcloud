@@ -1695,6 +1695,14 @@ nacos是一个更易于构建云原生应用的动态服务发现、配置管理
     </dependencies>
     
     配置
+    application.yml
+    spring:
+      profiles:
+        # 指定读取配置环境信息
+        #active: dev
+        #active: test
+        active: info
+    bootstrap.yml
     spring:
       #服务别名，注册到eureka服务名称
       application:
@@ -1702,10 +1710,17 @@ nacos是一个更易于构建云原生应用的动态服务发现、配置管理
       cloud:
         nacos:
           discovery:
-            server-addr: localhost:8848 #设置nacos地址
+            #server-addr: localhost:8848 #设置单机nacos地址
+            server-addr: localhost:1111 #设置集群nacos地址
           config:
-            server-addr: localhost:8848 #设置nacos地址
+            #server-addr: localhost:8848 #设置单机nacos地址
+            server-addr: localhost:1111 #设置集群nacos地址
             file-extension: yaml # 指定yaml文件配置
+            # 不指定默认为：DEFAULT_GROUP
+            group: DEV_GROUP #指定分组读取配置
+            # 指定命名空间的环境
+            namespace: 1dcc29bf-dc0f-4ff4-beb7-8b3d2cb2b5d2
+    # ${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.file-extension}
 
     运行
        @SpringBootApplication
@@ -1730,5 +1745,97 @@ nacos是一个更易于构建云原生应用的动态服务发现、配置管理
             }
         }
     
-    nacos服务配置新增：cloud-nacos-config-dev.yaml
+    nacos服务配置新增：cloud-nacos-config-dev.yaml 默认DEFAULT_GROUP
+    新建在DEFAULT_GROUP下
+    在application.yml文件切换不同的环境
+    spring:
+          profiles:
+            # 指定读取配置环境信息
+            #active: dev
+            #active: test
+            active: info
+    cloud-nacos-config-dev.yaml
+    cloud-nacos-config-test.yaml
+    新建不同的组：DEV_GROUP，TEST_GROUP
+    cloud-nacos-config-info.yaml
+    cloud-nacos-config-info.yaml
+    新建命名空间：dev,test,注意不能删除默认public
+    cloud-nacos-config-dev.yaml
+    cloud-nacos-config-test.yaml
     选择yaml输入 config:info: nacos-dev
+    nacos集群
+    https://nacos.io/en-us/docs/cluster-mode-quick-start.html
+    默认值数据库是derpy切换mysql
+    https://nacos.io/en-us/docs/deployment.html
+    在config下的nacos-mysql.sql执行sql语句，创建nacos_config数据库
+    在config下的application.properties加以下语句
+    #######################################
+    spring.datasource.platform=mysql
+    
+    db.num=1
+    db.url.0=jdbc:mysql://127.0.0.1:3306/nacos_config?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true
+    db.user=nacos_devtest
+    db.password=youdontknow
+    
+下载linux文件nacos
+[nacos-linux](https://github.com/alibaba/nacos/releases/tag/1.1.4)nacos-server-1.1.4.tar.gz
+
+解压
+tar -zxvf nacos-server-1.1.4.tar.gz
+复制
+cp -r nacos /mynacos
+重命名
+mv nacos mynacos
+查看ip
+hostname -i
+添加集群
+1.在config下的nacos-mysql.sql执行sql语句，创建nacos_config数据库
+2.在config下的application.properties加以下语句
+#######################################
+spring.datasource.platform=mysql
+
+db.num=1
+db.url.0=jdbc:mysql://127.0.0.1:3306/nacos_config?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true
+db.user=nacos_devtest
+db.password=youdontknow
+3.在config下的cluster.conf.example复制为cluster.conf添加
+192.168.11.144:3344
+192.168.11.144:3355
+192.168.11.144:3366
+4.编辑bin/startup.sh脚本、
+mode =cluster
+在while getopts ":m:f:s:" opt加
+while getopts ":m:f:s:p:" opt
+p)
+            PORT=$OPTARG;;
+
+nohup $JAVA ${JAVA_OPT} nacos.nacos >> ${BASE_DIR}/logs/start.out 2>&1 &
+修改后
+nohup $JAVA -Dserver.port=${PORT} ${JAVA_OPT} nacos.nacos >> ${BASE_DIR}/logs/start.out 2>&1 &
+执行
+startup.sh -p 3344
+startup.sh -p 3355
+startup.sh -p 3366
+查看启动
+ps -ef|grep nacos|grep -v grep|wc -l
+查看内存
+free
+内存调整
+JAVA_OPT="${JAVA_OPT} -server -Xms1g -Xmx1g -Xmn512m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m"
+修改nginx配置集群
+在config下的nginx.config添加
+upstream bakend {
+    server 192.168.43.237:3344;
+    server 192.168.43.237:3355;
+    server 192.168.43.237:3366;
+}
+
+location / {  
+			proxy_pass http://cluster;
+		}
+		
+1.nginx -c /usr/local/etc/nginx/nginx.conf命令
+2.nginx -t  检查语法
+3.nginx -s reload 重启
+4.nginx -s stop 停止
+访问：http://localhost:1111/nacos
