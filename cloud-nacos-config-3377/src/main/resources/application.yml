@@ -1,3 +1,6 @@
 spring:
   profiles:
+    # 指定读取配置环境信息
     active: dev
+    #active: test
+    #active: info

@@ -8,7 +8,15 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848 #设置nacos地址
+        #server-addr: localhost:8848 #设置单机nacos地址
+        server-addr: localhost:1111 #设置集群nacos地址
       config:
-        server-addr: localhost:8848 #设置nacos地址
+        #server-addr: localhost:8848 #设置单机nacos地址
+        server-addr: localhost:1111 #设置集群nacos地址
         file-extension: yaml # 指定yaml文件配置
+        # 不指定默认为：DEFAULT_GROUP
+        #group: DEV_GROUP #指定分组读取配置
+        # 指定命名空间的环境
+        #namespace: 78e97dec-a5c4-495b-9f42-1f799b4e83df
+
+# ${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.file-extension}
