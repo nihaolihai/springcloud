@@ -15,8 +15,8 @@ spring:
         server-addr: localhost:1111 #设置集群nacos地址
         file-extension: yaml # 指定yaml文件配置
         # 不指定默认为：DEFAULT_GROUP
-        #group: DEV_GROUP #指定分组读取配置
+        group: DEV_GROUP #指定分组读取配置
         # 指定命名空间的环境
-        #namespace: 78e97dec-a5c4-495b-9f42-1f799b4e83df
+        namespace: cbf79061-3f0c-4874-ab92-df0c7b0491d5
 
 # ${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.file-extension}

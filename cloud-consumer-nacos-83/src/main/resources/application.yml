@@ -7,7 +7,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848 #设置nacos地址
+        server-addr: localhost:1111 #设置nacos地址
 
 service-url:
   nacos-user-serive: http://cloud-nacos-provider
