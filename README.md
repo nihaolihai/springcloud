@@ -340,6 +340,11 @@ https://www.hutool.cn/docs/#/
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
     </dependency> 
+    <!--短信发送-->
+    <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-alicloud-sms</artifactId>
+    </dependency>
     </dependencies>
     <build>
         <plugins>
