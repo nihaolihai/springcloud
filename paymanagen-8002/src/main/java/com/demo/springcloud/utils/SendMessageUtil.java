@@ -1,23 +1,12 @@
-这是支付模块，端口8002，添加了eureka客户端及获取服务信息，
-注入eureka集群
-官网：http://sms.webchinese.cn/
-发送短信
-<dependency>
-    <groupId>commons-logging</groupId>
-    <artifactId>commons-logging</artifactId>
-    <version>1.1.1</version>
-</dependency>
-<dependency>
-    <groupId>commons-codec</groupId>
-    <artifactId>commons-codec</artifactId>
-    <version>1.4</version>
-</dependency>
-<dependency>
-    <groupId>commons-httpclient</groupId>
-    <artifactId>commons-httpclient</artifactId>
-    <version>3.0.1</version>
-</dependency>
-类
+package com.demo.springcloud.utils;
+
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.PostMethod;
+
+import java.util.Random;
+
 public class SendMessageUtil {
 
     private static final String SMS_Url = "http://sms.webchinese.cn/web_api/";
@@ -124,13 +113,5 @@ public class SendMessageUtil {
             result.append(random.nextInt(10));
         }
         return result.toString();
-    }
-}
-测试
-public class TestSms {
-
-    public static void main(String[] ares){
-        Integer resultCode = SendMessageUtil.send("lvfaxxxxxx", "0b334927e1xxxxxxxxxx", "153xxxxxxxxx", "验证码:" + getRandomCode(6));
-        System.out.println(SendMessageUtil.getMessage(resultCode));
     }
 }
