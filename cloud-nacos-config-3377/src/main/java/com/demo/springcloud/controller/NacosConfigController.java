@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RefreshScope//支持nacos动然刷新功能
-@RequestMapping("test/api")
+@RequestMapping("/api")
 public class NacosConfigController {
 
     @Value("${config.info}")
@@ -16,6 +16,6 @@ public class NacosConfigController {
 
     @GetMapping(value = "/configinfo")
     public String getServerInfo(){
-        return serverinfo;
+        return "欢迎来到nginx反向代理："+serverinfo;
     }
 }

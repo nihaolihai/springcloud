@@ -1834,8 +1834,53 @@ location / {
 			proxy_pass http://cluster;
 		}
 		
-1.nginx -c /usr/local/etc/nginx/nginx.conf命令
+1.nginx -c /usr/local/etc/nginx/nginx.conf命令(修改则执行)
 2.nginx -t  检查语法
 3.nginx -s reload 重启
 4.nginx -s stop 停止
 访问：http://localhost:1111/nacos
+
+    success案例
+    upstream cluster {
+        server 127.0.0.1:3344;
+        server 127.0.0.1:3355;
+        server 127.0.0.1:3366;
+    }
+    server {
+        listen       1111;
+        server_name  localhost;
+
+        location /nacos {
+            proxy_pass http://cluster;
+        }
+        location ^~/api  {
+            proxy_pass http://127.0.0.1:3377;
+            client_max_body_size 100m;
+            proxy_connect_timeout 300s;
+            proxy_send_timeout 300s;
+            proxy_read_timeout 300s;
+        }
+        #location ~ \.php$ {
+        #    proxy_pass   http://127.0.0.1;
+        #}
+        #location ^~/psd/api {
+        #    proxy_pass http://192.168.7.21:25008;
+        #    client_max_body_size 100m;
+        #    proxy_connect_timeout 300s;
+        #    proxy_send_timeout 300s;
+        #    proxy_read_timeout 300s;
+        #    proxy_set_header Host $host;
+        #    proxy_set_header X-Real-IP $remote_addr;
+        #    proxy_set_header X-Real-Port $remote_port;
+        #    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        #    access_by_lua_file /usr/local/nginx/lua/rose.lua;
+        #}
+    }
+    启动nginx和nacos服务
+    nacos登录
+    访问：http://localhost:1111/nacos
+    调用接口
+    1.内网接口
+    http://localhost:3377/api/configinfo
+    2.配置nginx
+    http://localhost:1111/api/configinfo
