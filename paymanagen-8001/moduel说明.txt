@@ -1,4 +1,10 @@
 这是支付模块，端口8001，添加了eureka客户端及注入eureka集群
+添加短信发送
+<!--短信发送-->
+<dependency>
+    <groupId>com.alibaba.cloud</groupId>
+    <artifactId>spring-cloud-alicloud-sms</artifactId>
+</dependency>
 依赖
 <dependencies>
         <dependency>
@@ -56,6 +62,12 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-zipkin</artifactId>
         </dependency>
+        <!--短信发送-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-alicloud-sms</artifactId>
+        </dependency>
+
     </dependencies>
 配置
 spring:
