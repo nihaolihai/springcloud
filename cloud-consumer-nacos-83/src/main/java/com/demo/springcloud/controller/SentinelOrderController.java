@@ -4,6 +4,7 @@ import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.demo.springcloud.entities.CommoneResult;
 import com.demo.springcloud.entities.Payment;
+import com.demo.springcloud.service.PaymentFeignService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,9 @@ public class SentinelOrderController {
 
     @Resource
     private RestTemplate restTemplate;
+
+    @Resource
+    private PaymentFeignService paymentFeignService;
 
     @Value("${service-url.nacos-user-serive}")
     private String serverUrl;
@@ -62,6 +66,17 @@ public class SentinelOrderController {
     public CommoneResult handerBlockback(@PathVariable String string, BlockException exception){
         Payment payment = new Payment(Long.getLong(string),null);
         return new CommoneResult(445,"配置异常："+exception.getClass().getCanonicalName(),payment);
+    }
+
+    /**
+     * 利用openfeign调用
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "/consumernacos/openfeign/{string}")
+    public CommoneResult<Payment> getPayment(@PathVariable("id") String id){
+        CommoneResult<Payment> sentinel = paymentFeignService.getSentinel(id);
+        return sentinel;
     }
 
 }

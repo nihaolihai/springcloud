@@ -1681,6 +1681,8 @@ nacos是一个更易于构建云原生应用的动态服务发现、配置管理
 
         @Resource
         private RestTemplate restTemplate;
+        @Resource
+        private PaymentFeignService paymentFeignService;
 
         @Value("${service-url.nacos-user-serive}")
         private String serverUrl;
@@ -1725,6 +1727,36 @@ nacos是一个更易于构建云原生应用的动态服务发现、配置管理
         public CommoneResult handerBlockback(String string, BlockException exception){
             Payment payment = new Payment(Long.getLong(string),null);
             return new CommoneResult(445,"配置异常："+exception.getClass().getCanonicalName(),payment);
+        }
+        /**
+         * 利用openfeign调用
+         * @param id
+         * @return
+         */
+        @GetMapping(value = "/consumernacos/openfeign/{string}")
+        public CommoneResult<Payment> getPayment(@PathVariable("id") String id){
+            CommoneResult<Payment> sentinel = paymentFeignService.getSentinel(id);
+            return sentinel;
+        }
+    }
+    service
+    @FeignClient(value = "cloud-nacos-provider",fallback = PaymentFeignServiceImpl.class)
+    public interface PaymentFeignService {
+    
+        /**
+         * 获取信息
+         * @return
+         */
+        @GetMapping(value = "/providernacos/sentinel/{id}")
+        CommoneResult<Payment> getSentinel(@PathVariable("id") String id);
+    
+    }
+    @Component
+    public class PaymentFeignServiceImpl  implements  PaymentFeignService{
+    
+        @Override
+        public CommoneResult<Payment> getSentinel(String id) {
+            return new CommoneResult(444,"利用openfeign调用提供者异常");
         }
     }
     
