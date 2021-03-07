@@ -8,6 +8,15 @@ spring:
     nacos:
       discovery:
         server-addr: localhost:1111 #设置nacos地址
+    sentinel:
+      transport:
+        dashboard: localhost:8080 # 设置sentinel地址
+        port: 8719
 
 service-url:
   nacos-user-serive: http://cloud-nacos-provider
+
+# 激活openfeign
+feign:
+  sentinel:
+    enabled: true

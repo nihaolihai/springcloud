@@ -95,6 +95,7 @@ public class FlowLimitController {
      * 阈值：1(1秒调用次数)
      * 是否集群：否
      * 例外项数目：0
+     * 热点基本类型及string
      * @return
      */
     @GetMapping("/testhostkey")

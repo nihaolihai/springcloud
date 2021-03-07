@@ -1,4 +1,4 @@
-这是nacos消费者模块，端口83
+这是nacos消费者模块，端口83，添加sentinel
     依赖
     <dependencies>
             <dependency>
@@ -40,6 +40,18 @@
                 <artifactId>spring-cloud-commons</artifactId>
                 <version>2.2.1.RELEASE</version>
             </dependency>
+            <dependency>
+                <groupId>com.alibaba.csp</groupId>
+                <artifactId>sentinel-datasource-nacos</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-openfeign</artifactId>
+            </dependency>
         </dependencies>
 
     配置
@@ -50,13 +62,21 @@
         nacos:
           discovery:
             server-addr: localhost:8848 #设置nacos地址
-
+        sentinel:
+              transport:
+                dashboard: localhost:8080 # 设置sentinel地址
+                port: 8719
     service-url:
       nacos-user-serive: http://cloud-nacos-provider
 
+    # 激活openfeign
+    feign:
+      sentinel:
+        enabled: true
 
     @SpringBootApplication
     @EnableDiscoveryClient
+    @EnableFeignClients
     public class NacosConsumerDemoApplication83 {
 
         public static void main(String[] args) {
@@ -89,5 +109,57 @@
         public String echo(@PathVariable String string) {
 
             return restTemplate.getForObject(serverUrl+"/providernacos/echo/"+string,String.class)+"consumerHello Nacos Discovery " + string;
+        }
+    }
+    添加sentinel
+    @RestController
+    public class SentinelOrderController {
+
+        @Resource
+        private RestTemplate restTemplate;
+
+        @Value("${service-url.nacos-user-serive}")
+        private String serverUrl;
+
+        @GetMapping(value = "/consumernacos/sentinel/{string}")
+        //一调用此接口，sentinel就能监控到
+        //@SentinelResource(value = "basesentinel")
+        //fallback = "handerFallback",管理运行异常
+        //@SentinelResource(value = "basesentinel",fallback = "handerFallback")
+        //blockHandler = "handerBlockback",管理配置异常
+        //@SentinelResource(value = "basesentinel",blockHandler = "handerBlockback")
+        //fallback，blockHandler都配，只走blockHandler流控模式,exceptionsToIgnore忽略异常
+        @SentinelResource(value = "basesentinel",fallback = "handerFallback",blockHandler = "handerBlockback",
+        exceptionsToIgnore = {IllegalAccessException.class,NullPointerException.class})
+        public CommoneResult<Payment> getSentinel(@PathVariable String string) {
+            CommoneResult<Payment> result = restTemplate.getForObject(serverUrl + "/providernacos/sentinel/" + string, CommoneResult.class, string);
+            if(string.equals("4")){
+                throw new IllegalArgumentException("非法参数异常");
+            }else if(StringUtils.isEmpty(string)){
+                throw new NullPointerException("空指针异常");
+            }
+            return result;
+        }
+
+        /**
+         * 运行异常
+         * @param string
+         * @param exception
+         * @return
+         */
+        public CommoneResult handerFallback(@PathVariable String string,Throwable exception){
+            Payment payment = new Payment(Long.getLong(string),null);
+            return new CommoneResult(444,"兜底异常："+exception.getMessage(),payment);
+        }
+
+        /**
+         * 配置异常
+         * @param string
+         * @param exception
+         * @return
+         */
+        public CommoneResult handerBlockback(String string, BlockException exception){
+            Payment payment = new Payment(Long.getLong(string),null);
+            return new CommoneResult(445,"配置异常："+exception.getClass().getCanonicalName(),payment);
         }
     }

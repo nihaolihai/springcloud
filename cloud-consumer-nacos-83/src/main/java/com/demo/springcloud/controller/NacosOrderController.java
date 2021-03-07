@@ -18,8 +18,7 @@ public class NacosOrderController {
     private String serverUrl;
 
     @GetMapping(value = "/consumernacos/echo/{string}")
-    public String echo(@PathVariable String string) {
-
+    public String getEcho(@PathVariable String string) {
         return restTemplate.getForObject(serverUrl+"/providernacos/echo/"+string,String.class)+"consumerHello Nacos Discovery " + string;
     }
 }

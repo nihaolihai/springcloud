@@ -1564,46 +1564,58 @@ nacos是一个更易于构建云原生应用的动态服务发现、配置管理
     消费者
     依赖
     <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-            </dependency>
-            <!-- 图形化 -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-actuator</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-devtools</artifactId>
-                <scope>runtime</scope>
-                <optional>true</optional>
-            </dependency>
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <optional>true</optional>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.demo.springcloud</groupId>
-                <artifactId>cloud-api-commons</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.cloud</groupId>
-                <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-commons</artifactId>
-                <version>2.2.1.RELEASE</version>
-            </dependency>
-        </dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- 图形化 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.demo.springcloud</groupId>
+            <artifactId>cloud-api-commons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-commons</artifactId>
+            <version>2.2.1.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-datasource-nacos</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+    </dependencies>
 
     配置
     spring:
@@ -1613,13 +1625,22 @@ nacos是一个更易于构建云原生应用的动态服务发现、配置管理
         nacos:
           discovery:
             server-addr: localhost:8848 #设置nacos地址
-
+        sentinel:
+          transport:
+            dashboard: localhost:8080 # 设置sentinel地址
+            port: 8719
+            
     service-url:
       nacos-user-serive: http://cloud-nacos-provider
-
+    
+    #激活openfeign
+    feign:
+      sentinel:
+        enabled: true
 
     @SpringBootApplication
     @EnableDiscoveryClient
+    @EnableFeignClients
     public class NacosConsumerDemoApplication83 {
 
         public static void main(String[] args) {
@@ -1652,6 +1673,58 @@ nacos是一个更易于构建云原生应用的动态服务发现、配置管理
         public String echo(@PathVariable String string) {
 
             return restTemplate.getForObject(serverUrl+"/providernacos/echo/"+string,String.class)+"consumerHello Nacos Discovery " + string;
+        }
+    }
+    添加sentinel
+    @RestController
+    public class SentinelOrderController {
+
+        @Resource
+        private RestTemplate restTemplate;
+
+        @Value("${service-url.nacos-user-serive}")
+        private String serverUrl;
+
+        @GetMapping(value = "/consumernacos/sentinel/{string}")
+        //一调用此接口，sentinel就能监控到
+        //@SentinelResource(value = "basesentinel")
+        //fallback = "handerFallback",管理运行异常
+        //@SentinelResource(value = "basesentinel",fallback = "handerFallback")
+        //blockHandler = "handerBlockback",管理配置异常
+        //@SentinelResource(value = "basesentinel",blockHandler = "handerBlockback")
+        //fallback，blockHandler都配，只走blockHandler流控模式,exceptionsToIgnore忽略异常
+        @SentinelResource(value = "basesentinel",fallback = "handerFallback",blockHandler = "handerBlockback",
+        exceptionsToIgnore = {IllegalAccessException.class,NullPointerException.class})
+        public CommoneResult<Payment> getSentinel(@PathVariable String string) {
+            CommoneResult<Payment> result = restTemplate.getForObject(serverUrl + "/providernacos/sentinel/" + string, CommoneResult.class, string);
+            if(string.equals("4")){
+                throw new IllegalArgumentException("非法参数异常");
+            }else if(StringUtils.isEmpty(string)){
+                throw new NullPointerException("空指针异常");
+            }
+            return result;
+        }
+    
+        /**
+         * 运行异常
+         * @param string
+         * @param exception
+         * @return
+         */
+        public CommoneResult handerFallback(@PathVariable String string,Throwable exception){
+            Payment payment = new Payment(Long.getLong(string),null);
+            return new CommoneResult(444,"兜底异常："+exception.getMessage(),payment);
+        }
+    
+        /**
+         * 配置异常
+         * @param string
+         * @param exception
+         * @return
+         */
+        public CommoneResult handerBlockback(String string, BlockException exception){
+            Payment payment = new Payment(Long.getLong(string),null);
+            return new CommoneResult(445,"配置异常："+exception.getClass().getCanonicalName(),payment);
         }
     }
     
@@ -2037,6 +2110,7 @@ java -jar sentinel-dashboard-1.8.1
          * 阈值：1(1秒调用次数)
          * 是否集群：否
          * 例外项数目：0
+         * 热点基本类型及string
          * @return
          */
         @GetMapping("/testhostkey")
@@ -2049,3 +2123,70 @@ java -jar sentinel-dashboard-1.8.1
             return "******热点规则,异常处理提示********";
         }
     }
+系统规则支持以下模式
+1.load自适应（仅对linux机器生效）
+2.CPU
+3.平均RT
+4.并发线程数
+5.入口qps
+
+测试按资源名称限流
+登录sentinel新增流控规则：添加资源名称：testresource
+    
+    @RestController
+    @RequestMapping(value = "sentinel/apis")
+    public class RateLimitController {
+
+         /**
+         * @SentinelResource
+         * 按资源名称限流测试OK
+         * 登录sentinel：添加资源名称：testresource，一调用后就会有
+         * 新增流量控制规则
+         * 1.资源名：testresource
+         * 2.针对来源：defalut
+         * 3.阈值类型：qps(秒)，线程数(多线程调用)；单机阈值：1
+         * @return
+         */
+        @GetMapping("/testresource")
+        @SentinelResource(value = "testresource",blockHandler = "handerException")
+        public CommoneResult getTestResource(){
+            return new CommoneResult(200,"按资源名称限流测试OK",new Payment(2020L,"test"));
+        }
+        public CommoneResult handerException(BlockException blockException){
+            return new CommoneResult(444,blockException.getClass().getCanonicalName()+"\t 服务不可用");
+        }
+        /**
+         * 不写blockHandler，默认自带
+         * @return
+         */
+        @GetMapping("/testresource/byurl")
+        @SentinelResource(value = "byurl",blockHandler = "handerExceptions")
+        public CommoneResult getTestResourceByurl(){
+            return new CommoneResult(200,"按资源url限流测试OK",new Payment(2020L,"test"));
+        }
+        public CommoneResult handerExceptions(BlockException blockException){
+            return new CommoneResult(444,blockException.getClass().getCanonicalName()+"\t 服务不可用");
+        }
+        /**
+         * 自定义异常
+         */
+        @GetMapping("/testresource/customerBloclHander")
+        @SentinelResource(value = "customerBloclHander",blockHandlerClass = CustomerBloclHander.class,blockHandler = "handerExcetion")
+        public CommoneResult getTestCustomerBloclHander(){
+            return new CommoneResult(200,"按资源customerBloclHander限流测试OK",new Payment(2020L,"test"));
+        }
+    }
+    /**
+     * 自定义异常
+     */
+    public class CustomerBloclHander {
+    
+        public static CommoneResult handerExcetion(BlockException blockException){
+            return new CommoneResult(444,"按客户自定义异常1号");
+        }
+        public static CommoneResult handerExcetions(BlockException blockException){
+            return new CommoneResult(444,"按客户自定义异常2号");
+        }
+    }
+sentinel三个核心API：sphu定义资源，tracer定义统计，contextutil定义上下文
+sentinel整合：ribbon+openfeign+fallback
