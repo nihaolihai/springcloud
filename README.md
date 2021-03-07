@@ -2041,6 +2041,16 @@ java -jar sentinel-dashboard-1.8.1
           transport:
             dashboard: localhost:8080 # 设置sentinel地址
             port: 8719
+            #增加持久化，放在sentinel重启，配置丢失
+            datasource:
+              ds1:
+                nacos:
+                  server-addr: localhost:1111
+                  dataId: ${spring.application.name}
+                  groupId: DEFAULT_GROUP
+                  data-type: json
+                  rule-type: flow
+                  
     #暴露点
     management:
       endpoints:
@@ -2222,3 +2232,27 @@ java -jar sentinel-dashboard-1.8.1
     }
 sentinel三个核心API：sphu定义资源，tracer定义统计，contextutil定义上下文
 sentinel整合：ribbon+openfeign+fallback
+一旦sentinel重启，配置一些规则将会丢失？？？
+登录nacos配置管理添加
+名称：cloudalibaba-setinel-service
+类型：DEFAULT_GROUP
+json:
+
+    [{
+    资源名称
+    "resource":"/testresource/byurl",
+    来源应用
+    "limitApp":"default",
+    阈值类型，0代表线程数，1代表qps
+    "grade":1,
+    单机阈值
+    "count":0,
+    流控模式，0代表直接，1代表关联，2代表链路
+    "strategy":0,
+    流控效果，0代表快速失败，1代表warm up,2代表排队等待
+    "controlBehavior":0,
+    是否集群
+    "clusterMode":"false"
+    }]
+    需要调用
+    http://locahost:8401/sentinel/apis/testresource/byurl才会在nacos配置看到

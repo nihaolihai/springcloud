@@ -13,6 +13,16 @@ spring:
       transport:
         dashboard: localhost:8080 # 设置sentinel地址
         port: 8719
+        #增加持久化，放在sentinel重启，配置丢失
+        datasource:
+          ds1:
+            nacos:
+              server-addr: localhost:1111
+              dataId: ${spring.application.name}
+              groupId: DEFAULT_GROUP
+              data-type: json
+              rule-type: flow
+
 #暴露点
 management:
   endpoints:
