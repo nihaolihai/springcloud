@@ -1889,3 +1889,83 @@ location / {
     http://localhost:3377/api/configinfo
     2.配置nginx
     http://localhost:1111/api/configinfo
+### sentinel(服务熔断与限流)
+[Sentinel官网](https://github.com/alibaba/Sentinel)
+运行
+java -jar sentinel-dashboard-1.8.1
+    
+    依赖
+    <dependencies>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <!-- 持久化 -->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-datasource-nacos</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+    配置
+    spring:
+      #服务别名，注册到nacos服务名称
+      application:
+        name: cloudalibaba-setinel-service
+      cloud:
+        nacos:
+          discovery:
+            server-addr: localhost:1111 #设置nacos地址
+        sentinel:
+          transport:
+            dashboard: localhost:8080 # 设置sentinel地址
+            port: 8719
+    #暴露点
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: '*'
+    测试
+    @SpringBootApplication
+    @EnableDiscoveryClient
+    public class StartApplicationSetinel {
+    
+        public static void main(String[] ares){
+            SpringApplication.run(StartApplicationSetinel.class,ares);
+        }
+    
+    }
+    @RestController
+    @RequestMapping(value = "sentinel/api")
+    public class FlowLimitController {
+    
+        @Value("${server.port}")
+        private String serverport;
+    
+        @GetMapping("/testa")
+        public String getTesta(){
+            return "*******A*******"+serverport;
+        }
+    
+        @GetMapping("/testb")
+        public String getTestb(){
+            return "*******B*******"+serverport;
+        }
+    }

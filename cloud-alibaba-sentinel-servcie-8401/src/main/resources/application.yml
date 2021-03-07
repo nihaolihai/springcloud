@@ -1,0 +1,22 @@
+server:
+  port: 8401
+
+spring:
+  #服务别名，注册到nacos服务名称
+  application:
+    name: cloudalibaba-setinel-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:1111 #设置nacos地址
+    sentinel:
+      transport:
+        dashboard: localhost:8080 # 设置sentinel地址
+        port: 8719
+#暴露点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+

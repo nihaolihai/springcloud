@@ -17,6 +17,6 @@ spring:
         # 不指定默认为：DEFAULT_GROUP
         group: DEV_GROUP #指定分组读取配置
         # 指定命名空间的环境
-        namespace: 78e97dec-a5c4-495b-9f42-1f799b4e83df
+        namespace: 3bf8affa-1f19-45a1-a727-99b832209200
 
 # ${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.file-extension}
