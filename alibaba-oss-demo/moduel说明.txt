@@ -30,5 +30,57 @@ https://help.aliyun.com/document_detail/32009.html
     </dependency>
 </dependencies>
 配置
+aliyun:
+  oss:
+    access-key-id: foobar
+    access-key-secret: foobarfoobar
+    endpoint: oss-cn-beijing.aliyuncs.com
 
+前端上传
+1、安装ali-oss
+npm install ali-oss --save
+2、demo
+此例中使用到了ElementUI的el-upload组件。因为样式为自定义的 所以没有用element的自动上传的属性，这里配置根据项目需求，需要自定义，可以按照以下配置：
+http-request：覆盖默认的上传行为，可以自定义上传的实现；
+show-file-list：是否显示已上传文件列表，默认是true；
+multiple：是否支持多选文件；
+action：必填参数，上传的地址（如果不自定义上传行为，可以直接在action配置地址就行，没有地址可以为空，但是不能不写action）。
+<template>
+    <el-upload :http-request="uploadFile" :multiple="true" :show-file-list="true" action="">
+        <el-button size="small" type="primary">点击上传</el-button>
+    </el-upload>
+</template>
+<script>
+    import OSS from 'ali-oss'
+    export default {
+        data() {
+            return {
+                fileList: []
+            }
+        },
+        methods: {
+            uploadFile(file) {
+                var client = new OSS({
+                    region: 'Your region',
+                    accessKeyId: 'Your AccessKeyId',
+                    accessKeySecret: 'Your AccessKeySecret',
+                    bucket: 'Your bucket name'
+                });
+                let name = file.file.name;
+                let index = name.lastIndexOf(".");
+                let suffix = name.substring(index, name.length); // 后缀名
+                //定义唯一的文件名
+                var fileName = 'photo' + file.file.uid + suffix;
+                client.put(fileName, file.file).then(
+                    result => {
+                        //下面是如果对返回结果再进行处理，根据项目需要
+                        this.fileList.push({'name': result.name, 'url': result.url});
+                        console.info(this.fileList);
+                    }).catch(err => {
+                    console.log(err);
+                })
+            },
+        }
+    }
+</script>
 
