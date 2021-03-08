@@ -1078,9 +1078,10 @@ https://spring.io/projects/spring-cloud-gateway#learn
  * 运行期间动态调整配置，不在需要在每个服务部署的机器上编写配置文件，服务会向配置中心统一拉取配置自己的信息
  * 当配置发生变动时，服务不需要重启即可感知到配置的变化并应用新的的配置
  * 将配置信息以REST接口的形式暴露
+ 测试congif
  
-       
-       依赖
+        
+        依赖
         <dependencies>
           <!--config-server -->
          <dependency>
@@ -1235,12 +1236,12 @@ https://spring.io/projects/spring-cloud-gateway#learn
         }
     }
     
-    访问
-    http://localhost:3355/configinfo
-    手动改配置中心服务端信息
-    需手动调post去刷新
-    curl -X POST "http://localhost:3355/actuator/refresh"
-    想自动获取最新的配置则要用到消息总线bus
+访问
+http://localhost:3355/configinfo
+手动改配置中心服务端信息
+需手动调post去刷新
+curl -X POST "http://localhost:3355/actuator/refresh"
+想自动获取最新的配置则要用到消息总线bus
     
  ## 消息总线bus,支持rabbit,kafka
      rabbitmq
