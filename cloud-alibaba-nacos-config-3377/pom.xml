@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>cloud-nacos-config-3377</artifactId>
+    <artifactId>cloud-alibaba-nacos-config-3377</artifactId>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
