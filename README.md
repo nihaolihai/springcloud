@@ -447,9 +447,58 @@ consul与zookeeper差不多，区别依赖包以配置项
                 discovery:
                     service-name: ${spring.application.name}
 ## eureka注册中心
-
+    
+    依赖
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.demo.springcloud</groupId>
+            <artifactId>cloud-api-commons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- 安全认证 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+    </dependencies>
+    
     配置
     服务端
+    #开启认证
+    spring:
+      security:
+        user:
+          name: admin
+          password: 123687
+          
     eureka:
       instance:
         hostname: eureka7001.com # eureka服务端的实例名称
@@ -486,7 +535,25 @@ consul与zookeeper差不多，区别依赖包以配置项
             #defaultZone: http://localhost:7001/eureka
             #集群配置：
             defaultZone: http://eureka7001.com:7001/eureka,http://eureka7001.com:7002/eureka
-        
+    
+    服务端
+    /***
+     * @ClassName: WebSecurityConfig
+     * @Description:开启认证了，但是没有禁用CSRF
+     * 新版本的spring-cloud2.0中： Spring Security默认开启了CSRF攻击防御
+     * CSRF会将微服务的注册也给过滤了，虽然不会影响注册中心，但是其他客户端是注册不了的
+     */
+    @Configuration
+    public class WebSecurityConfig {
+        @EnableWebSecurity
+        public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+            @Override
+            protected void configure(HttpSecurity http) throws Exception {
+                http.authorizeRequests().anyRequest().authenticated().and().httpBasic().and().csrf().disable();
+            }
+        }
+    }
+    
 主要注解
 //eureka服务端
 @EnableEurekaServer
