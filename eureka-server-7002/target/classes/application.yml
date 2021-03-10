@@ -1,6 +1,12 @@
 server:
   port: 7002
 
+spring:
+  security:
+    user:
+      name: admin
+      password: 123687
+
 eureka:
   instance:
     hostname: eureka7002.com # eureka服务端的实例名称

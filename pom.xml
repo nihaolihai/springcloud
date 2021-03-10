@@ -26,12 +26,13 @@
       <module>cloud-provider-rabbitmq-8801</module>
       <module>cloud-consumer-rabbitmq-8901</module>
       <module>cloud-consumer-rabbitmq-8902</module>
-      <module>cloud-provider-payment-nacos-9001</module>
-      <module>cloud-provider-payment-nacos-9002</module>
-      <module>cloud-consumer-nacos-83</module>
-      <module>cloud-nacos-config-3377</module>
+      <module>cloud-alibaba-provider-payment-nacos-9001</module>
+      <module>cloud-alibaba-provider-payment-nacos-9002</module>
+      <module>cloud-alibaba-consumer-nacos-83</module>
+      <module>cloud-alibaba-nacos-config-3377</module>
       <module>cloud-alibaba-sentinel-servcie-8401</module>
-      <module>alibaba-oss-demo</module>
+      <module>cloud-alibaba-oss-demo</module>
+      <module>cloud-alibaba-rocketMQ</module>
     </modules>
     <packaging>pom</packaging>
   <properties>
