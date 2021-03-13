@@ -1,0 +1,32 @@
+server:
+  port: 2003
+
+spring:
+  application:
+    name: seata-store-service
+  cloud:
+    alibaba:
+      seata:
+        tx-service-group: my_tx_group
+    nacos:
+      discovery:
+        server-addr: localhost:8848 #设置nacos地址
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: org.gjt.mm.mysql.Driver
+    url: jdbc:mysql://localhost:3306/seata_pay?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: qiuroot889
+    validationQuery: SELECT 1
+
+feign:
+  hystrix:
+    enabled: false
+
+logging:
+  level:
+    io:
+      seata: info
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml

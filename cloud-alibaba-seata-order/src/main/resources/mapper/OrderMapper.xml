@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.springcloud.dao.OrderDao">
+    <resultMap id="BaseResultMap" type="com.demo.springcloud.entities.Order">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <id column="user_id" jdbcType="BIGINT" property="userId" />
+        <id column="product_id" jdbcType="BIGINT" property="productId" />
+        <id column="count" jdbcType="INT" property="count" />
+        <id column="money" jdbcType="decimal" property="money" />
+        <id column="status" jdbcType="INT" property="status" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+            id,user_id,product_id,count,money,status
+    </sql>
+    <!-- 添加用户信息-->
+    <insert id="create" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
+            parameterType="com.demo.springcloud.entities.Order">
+        insert into
+        t_order(id,user_id,product_id,count,money,status)
+        values (#{id},#{user_id},#{product_id},#{count},#{money},#{status})
+    </insert>
+    <!--通过iD查找用户信息-->
+    <select id="getById" resultMap="BaseResultMap"  parameterType="long">
+       select
+       <include refid="Base_Column_List"/>
+       from t_order
+       where id=#{id}
+    </select>
+</mapper>

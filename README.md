@@ -2318,3 +2318,88 @@ json:
     }]
     需要调用
     http://locahost:8401/sentinel/apis/testresource/byurl才会在nacos配置看到
+### seata(分布式事务)
+seata是一款开源的分布式事务解决方案，致力于在微服务
+框架下提供高性能和简单易用的分布式事务服务
+官网：http://seata.io/zh-cn/
+分布式事务处理过程的id+三大组件：
+1.全局唯一的事务ID
+2.TCtc+TM+RM
+1)TC(Transaction Coordinator)事务协调者
+维护全局和分支事务的状态，驱动全局事务提交或回滚。
+2)TM(Transaction Manager)事务管理器
+定义全局事务的范围：开始全局事务、提交或回滚全局事务。
+3)RM(Resource Manager)资源管理器
+管理分支事务处理的资源，与TC交谈以注册分支事务和报告分支事务的状态，并驱动分支事务提交或回滚。
+下载seata-server-0.9.0并修改文件
+seata-server-0.9.0下config:file.conf
+1.service{
+由default改为my_tx_group(随意)
+vgroup_mapping.my_test_tx_group = "my_tx_group"
+}
+2.store{
+file改为db
+ mode = "db"
+ db {
+  url = "jdbc:mysql://127.0.0.1:3306/seata"
+  user = "root"
+  password = "root"
+ }
+}
+3.执行db_store脚本
+4.registry.conf下
+registry{
+  file:nacos,eureka,redis,zk,consul,etcd3,sofa
+  type = "nacos"
+  nacos {
+    serverAddr = "localhost:1111"
+    namespace = ""
+    cluster = "default"
+  }
+}
+5.先启动nacos再启动seata-server
+seata-server-0.9.0\bin\seata-server.bat
+    
+    业务需求：下订单->减库存->扣余额->改订单状态
+    业务需求：下订单->减库存->扣余额->改订单状态
+    需要创建三个数据库：seata_order,seata_store,seata_account
+    不同的库创建不同的表
+    CREATE TABLE `t_order` (
+      `id` int(11) NOT NULL,
+      `user_id` int(11) DEFAULT NULL,
+      `product_id` int(11) DEFAULT NULL,
+      `count` int(11) DEFAULT NULL,
+      `money` decimal(11,0) DEFAULT NULL,
+      `status` int(1) DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+    CREATE TABLE `t_acount` (
+      `id` int(11) NOT NULL,
+      `user_id` int(11) DEFAULT NULL,
+      `total` int(11) DEFAULT NULL,
+      `used` int(11) DEFAULT NULL,
+      `residue` int(11) DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+    CREATE TABLE `t_store` (
+      `id` int(11) NOT NULL,
+      `product_id` int(11) DEFAULT NULL,
+      `total` int(11) DEFAULT NULL,
+      `used` int(11) DEFAULT NULL,
+      `residue` int(11) DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+    共同的表
+    CREATE TABLE `undo_log` (
+      `id` bigint(20) NOT NULL AUTO_INCREMENT,
+      `branch_id` bigint(20) NOT NULL,
+      `xid` varchar(100) NOT NULL,
+      `context` varchar(128) NOT NULL,
+      `rollback_info` longblob NOT NULL,
+      `log_status` int(11) NOT NULL,
+      `log_created` datetime NOT NULL,
+      `log_modified` datetime NOT NULL,
+      `ext` varchar(100) DEFAULT NULL,
+      PRIMARY KEY (`id`),
+      UNIQUE KEY `ux_undo_log` (`xid`,`branch_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8

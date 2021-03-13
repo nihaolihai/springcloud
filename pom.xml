@@ -33,6 +33,9 @@
       <module>cloud-alibaba-sentinel-servcie-8401</module>
       <module>cloud-alibaba-oss-demo</module>
       <module>cloud-alibaba-rocketMQ</module>
+        <module>cloud-alibaba-seata-order</module>
+      <module>cloud-alibaba-seata-store</module>
+      <module>cloud-alibaba-seata-account</module>
     </modules>
     <packaging>pom</packaging>
   <properties>
