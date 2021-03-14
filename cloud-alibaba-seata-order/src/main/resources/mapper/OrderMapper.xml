@@ -7,9 +7,9 @@
         <id column="id" jdbcType="BIGINT" property="id" />
         <id column="user_id" jdbcType="BIGINT" property="userId" />
         <id column="product_id" jdbcType="BIGINT" property="productId" />
-        <id column="count" jdbcType="INT" property="count" />
-        <id column="money" jdbcType="decimal" property="money" />
-        <id column="status" jdbcType="INT" property="status" />
+        <id column="count" jdbcType="INTEGER" property="count" />
+        <id column="money" jdbcType="DECIMAL" property="money" />
+        <id column="status" jdbcType="INTEGER" property="status" />
     </resultMap>
     <sql id="Base_Column_List" >
             id,user_id,product_id,count,money,status
@@ -19,7 +19,7 @@
             parameterType="com.demo.springcloud.entities.Order">
         insert into
         t_order(id,user_id,product_id,count,money,status)
-        values (#{id},#{user_id},#{product_id},#{count},#{money},#{status})
+        values (#{id},#{userId},#{productId},#{count},#{money},0)
     </insert>
     <!--通过iD查找用户信息-->
     <select id="getById" resultMap="BaseResultMap"  parameterType="long">
@@ -28,4 +28,12 @@
        from t_order
        where id=#{id}
     </select>
+    <!-- 修改状态 -->
+    <update id="update">
+        update t_order
+        <set>
+            status = #{status}
+        </set>
+        where user_id=#{userId}
+    </update>
 </mapper>

@@ -10,9 +10,9 @@ spring:
         tx-service-group: my_tx_group
     nacos:
       discovery:
-        server-addr: localhost:8848 #设置nacos地址
+        server-addr: localhost:3344 #设置nacos地址
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
+    #type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: org.gjt.mm.mysql.Driver
     url: jdbc:mysql://localhost:3306/seata_pay?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: root
@@ -27,6 +27,3 @@ logging:
   level:
     io:
       seata: info
-
-mybatis:
-  mapper-locations: classpath:mapper/*.xml

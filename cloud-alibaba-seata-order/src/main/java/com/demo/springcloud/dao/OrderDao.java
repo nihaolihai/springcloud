@@ -8,4 +8,5 @@ import org.apache.ibatis.annotations.Param;
 public interface OrderDao {
     int create(Order order);
     Order getById(@Param("id") Long id);
+    void update(@Param("status") Integer status,@Param("userId") Long userId);
 }

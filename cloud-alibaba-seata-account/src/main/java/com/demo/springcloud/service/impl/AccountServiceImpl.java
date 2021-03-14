@@ -19,6 +19,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public int divide(Long userId, Integer money) {
+        return accountDao.divide(userId,money);
+    }
+
+    @Override
     public Account getById(Long id) {
         return accountDao.getById(id);
     }

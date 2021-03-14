@@ -18,7 +18,7 @@
             parameterType="com.demo.springcloud.entities.Store">
         insert into
         t_store(id,product_id,total,used,residue)
-        values (#{id},#{product_id},#{total},#{used},#{residue})
+        values (#{id},#{productId},#{total},#{used},#{residue})
     </insert>
     <!--通过iD查找用户信息-->
     <select id="getById" resultMap="BaseResultMap"  parameterType="long">
@@ -27,4 +27,9 @@
        from t_store
        where id=#{id}
     </select>
+    <update id="divide">
+        update t_store set
+        used = used+#{count},residue = total-#{count}
+        where where product_id=#{productId}
+    </update>
 </mapper>

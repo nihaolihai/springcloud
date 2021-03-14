@@ -7,5 +7,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface AccountDao {
     int create(Account account);
+    int divide(@Param("userId") Long userId,@Param("money") Integer money);
     Account getById(@Param("id") Long id);
 }

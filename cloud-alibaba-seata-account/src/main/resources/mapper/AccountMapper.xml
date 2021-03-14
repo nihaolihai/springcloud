@@ -18,7 +18,7 @@
             parameterType="com.demo.springcloud.entities.Account">
         insert into
         t_acount(id,user_id,total,used,residue)
-        values (#{id},#{user_id},#{total},#{used},#{residue})
+        values (#{id},#{userId},#{total},#{used},#{residue})
     </insert>
     <!--通过iD查找用户信息-->
     <select id="getById" resultMap="BaseResultMap"  parameterType="long">
@@ -27,4 +27,9 @@
        from t_acount
        where id=#{id}
     </select>
+    <update id="divide">
+        update t_acount set
+        used = used+#{money},residue = total-#{money}
+        where user_id=#{userId}
+    </update>
 </mapper>

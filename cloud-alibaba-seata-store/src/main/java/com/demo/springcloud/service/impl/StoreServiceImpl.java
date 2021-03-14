@@ -22,4 +22,9 @@ public class StoreServiceImpl implements StoreService {
     public Store getById(Long id) {
         return storeDao.getById(id);
     }
+
+    @Override
+    public int divide(Long productId, Integer count) {
+        return storeDao.divide(productId,count);
+    }
 }
